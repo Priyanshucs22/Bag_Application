@@ -3,10 +3,9 @@ A web-based e-commerce application for managing and purchasing bags, with featur
 
 ## Table of Contents
 1. [Features](#features)
-2. [Folder Structure](#folder-structure)
-3. [Installation](#installation)
-4. [Dependencies](#dependencies)
-5. [Future Improvements](#future-improvements)
+2. [Installation](#installation)
+3. [Dependencies](#dependencies)
+4. [Future Improvements](#future-improvements)
 
 ## Features
 
@@ -34,41 +33,6 @@ A web-based e-commerce application for managing and purchasing bags, with featur
 - Responsive design powered by **Tailwind CSS**.
 - Interactive features such as live search and hover effects.
 
-
-## Folder Structure
-
-├── config
-│   └── [Configuration files for database and environment setup]
-├── controllers
-│   └── authController.js
-├── middlewares
-│   └── isLoggedin.js
-├── models
-│   ├── owner-model.js
-│   ├── product-model.js
-│   └── user-model.js
-├── public
-│   └── [Static assets like CSS, JS, and images]
-├── routes
-│   ├── indexRouter.js
-│   ├── ownersRouter.js
-│   ├── productsRouter.js
-│   └── usersRouter.js
-├── utils
-│   └── [Utility functions like token generation]
-├── views
-│   ├── partials
-│   │   ├── admin.ejs
-│   │   ├── all-products.ejs
-│   │   ├── cart.ejs
-│   │   ├── createproducts.ejs
-│   │   ├── edit-profile.ejs
-│   │   ├── myprofile.ejs
-│   │   ├── new-collection.ejs
-│   │   ├── owner-login.ejs
-│   │   └── shop.ejs
-├── app.js
-└── package.json
 
 ## Installation And Start the application
 
