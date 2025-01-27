@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+            rel="stylesheet"
+        />
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+
+    <body class="font-['helvetica_now_display']">
+        <nav
+            class="w-full fixed top-0 left-0 px-5 py-3 flex items-center bg-white shadow-md"
+        >
+            <h3 class="text-xl font-bold">BAG SHOP</h3>
+            <% var loggedin=typeof loggedin !=="undefined" ? loggedin : true %>
+            <% if(loggedin) {%>
+            <div class="flex gap-7 items-center ml-auto mr-10">
+                <a href="/shop" class="hover:underline">Shop</a>
+                <a href="/cart" class="hover:underline">Cart</a>
+                <a href="/profile" class="hover:underline">My Account</a>
+                <a href="/users/logout" class="hover:underline">Logout</a>
+                <form
+                    action="/shop/search"
+                    method="get"
+                    id="searchForm"
+                    class="flex items-center ml-10"
+                >
+                    <input
+                        type="text"
+                        name="query"
+                        id="searchInput"
+                        placeholder="Search products..."
+                        class="border-[1px] px-2 py-1 rounded-md"
+                    />
+                    <button
+                        type="submit"
+                        class="bg-blue-500 text-white px-2 py-1 ml-2 rounded-md hover:bg-blue-400"
+                    >
+                        Search
+                    </button>
+                </form>
+            </div>
+
+            <% } %>
+        </nav>
+    </body>
+</html>

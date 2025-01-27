@@ -1,0 +1,74 @@
+<%- include('./partials/header') %>
+  <% if(success.length>0){ %>
+    <div class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-blue-500"
+      id="flash-message">
+      <span class="inline-block mt-1 mb-1 text-white">
+        <%= success %>
+      </span>
+    </div>
+    <% } %>
+
+      <div class="w-full h-screen flex items-start px-20 py-20">
+        <div class="w-[25%] flex h-screen flex-col items-start">
+          <div class="flex items-center gap-2">
+            <h3>Sort by</h3>
+            <form action="/sort">
+              <select class="border-[1px] rounder-md px-2 py-1" name="sortby" id="sortby">
+                <!-- <option value="popular">Popular</option> -->
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+              </select>
+              <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-400">Sort</button>
+            </form>
+          </div>
+          <div class="flex flex-col mt-20">
+            <a class="block w-fit mb-2 hover:underline" href="/products/new-Collection">New Collection</a>
+            <a class="block w-fit mb-2 hover:underline" href="/products/all">All Products</a>
+          </div>
+          <div class="mt-32">
+            <!-- <a class="block w-fit mb-2" href="">Filter by :</a>
+            <a class="block w-fit mb-2" href="">Availability</a>
+            <a class="block w-fit mb-2" href="">Discount</a> -->
+          </div>
+        </div>
+
+        <div class="w-[75%] flex flex-col gap-5 h-screen">
+          <div class="grid grid-cols-5 gap-5">
+            <% products.forEach(function(product){ %>
+              <div class="w-full">
+                <div class="w-full h-52 flex items-center justify-center bg-[<%= product.bgcolor %>]">
+                  <img class="h-[12rem]" src="data:image/jpeg;base64,<%= product.image.toString('base64') %>"
+                    alt="Product/" />
+                </div>
+                <div
+                  class="flex justify-between bg-[<%= product.panelcolor %>] items-center px-4 py-4 text-[<%= product.textcolor %>]">
+                  <div>
+                    <h3>
+                      <%= product.name %>
+                    </h3>
+                    <h4>₹ <%= product.price %>
+                    </h4>
+                  </div>
+                  <a class="w-7 h-7 flex items-center justify-center rounded-full bg-red"
+                    href="/addtocart/<%= product._id %>">
+                    <i class="ri-add-line"></i>
+                  </a>
+                </div>
+              </div>
+              <% }) %>
+          </div>
+        </div>
+
+      </div>
+      </div>
+
+      <script>
+        setTimeout(function () {
+          const messageElement = document.getElementById("flash-message");
+          if (messageElement) {
+            messageElement.style.display = "none";
+          }
+        }, 3000);
+      </script>
+
+<%- include('./partials/footer') %>

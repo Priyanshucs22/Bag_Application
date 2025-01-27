@@ -1,0 +1,17 @@
+<%- include('./partials/header') %>
+
+<div class="w-full h-screen flex flex-col items-center px-20 py-40 gap-10">
+    <div class="w-[50%] rounded-md shadow-lg p-6 bg-white">
+        <h2 class="text-3xl font-semibold mb-4">Your Profile</h2>
+        <div class="flex flex-col gap-3">
+            <p><strong>Name:</strong> <%= user.fullname %></p>
+            <p><strong>Email:</strong> <%= user.email %></p>
+        </div>
+        <div class="mt-4 flex justify-center gap-5">
+            <!-- <a href="/profile/edit" class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">Edit Profile</a> -->
+            <a href="/cart" class="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600">View Cart</a>
+        </div>
+    </div>
+</div>
+
+<%- include('./partials/footer') %>

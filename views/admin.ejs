@@ -1,0 +1,60 @@
+<%- include('./partials/header') %>
+<% let message = error || success || ''; %>
+<% let messageType = error ? 'error' : success ? 'success' : ''; %> <%
+if(message.length > 0) { %>
+<div
+    class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md <%= messageType === 'error' ? 'bg-red-500' : 'bg-blue-500' %>"
+    id="flash-message"
+>
+    <span class="inline-block mt-4 mb-1 text-white"> <%= message %> </span>
+</div>
+<% } %>
+
+<div class="w-full h-screen flex items-start px-20 py-20">
+    <div class="w-[25%] flex h-screen flex-col items-start">
+        <div class="flex flex-col">
+            <a class="block w-fit mb-2 hover:underline" href="/owners/login">All Products</a>
+            <a class="block w-fit mb-2 hover:underline" href="/owners/admin"
+                >Create new product</a
+            >
+        </div>
+    </div>
+    <div class="w-[75%] flex flex-col gap-5 h-screen">
+        <a class="text-red-500 hover:underline" href="/owners/deleteall" >Delete all</a>
+        <div class="grid grid-cols-5 gap-5">
+            <% products.forEach(function(product) { %>
+            <div class="w-full">
+                <div
+                    class="w-full h-52 flex items-center justify-center bg-[<%= product.bgcolor %>]"
+                >
+                    <img
+                        class="h-[12rem]"
+                        src="data:image/jpeg;base64,<%= product.image.toString('base64') %>"
+                        alt="Product/"
+                    />
+                </div>
+                <div
+                    class="flex justify-between bg-[<%= product.panelcolor %>] items-center px-4 py-4 text-[<%= product.textcolor %>]"
+                >
+                    <div>
+                        <h3><%= product.name %></h3>
+                        <h4>₹ <%= product.price %></h4>
+                    </div>
+                    <a class="w-7 h-7 text-red-600 hover:underline" href="/owners/deleteproduct/<%= product._id %>">
+                        Delete
+                    </a>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+    </div>
+</div>
+<script>
+    setTimeout(function () {
+      const messageElement = document.getElementById("flash-message");
+      if (messageElement) {
+        messageElement.style.display = "none";
+      }
+    }, 3000);
+  </script>
+<%- include('./partials/footer') %>
