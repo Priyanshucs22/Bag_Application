@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const config = require("config");
 
-const debug = require("debug")("development:mongoose"); // Set DEBUG=development:mongoose  in environment variables
+const debug = require("debug")("production:mongoose"); // Set DEBUG=development:mongoose  in environment variables
 mongoose
   .connect(`${config.get("MONGODB_URI")}/scatch`)
   .then(() => {

@@ -3,7 +3,7 @@ const router = express.Router();
 const ownerModel = require("../models/owner-model");
 const productsModel = require("../models/product-model");
 const bcrypt = require("bcrypt");
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "production") {
     (async () => {
         try {
             let ownerExists = await ownerModel.findOne({ email: process.env.Owner_Email });
