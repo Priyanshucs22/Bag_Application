@@ -4,6 +4,10 @@ const isloggedin = require("../middlewares/isLoggedin");
 const productModel = require("../models/product-model");
 const userModel = require("../models/user-model");
 
+const {createOrder , verifyPayment} = require('../controllers/payment');
+router.post('/createOrder',createOrder);
+router.post('/verifyOrder',verifyPayment);
+
 router.get("/", (req, res) => {
     let error = req.flash("error");
     let success = req.flash("success");
@@ -21,10 +25,16 @@ router.get("/shop", isloggedin, async (req, res) => {
         res.redirect("/");
     }
 });
+router.get("/order-success", (req, res) => {
+    res.render("order-success", {
+        paymentId: req.query.payment_id,
+        orderId: req.query.order_id
+    });
+});
 
 router.get("/shop/search", async (req, res) => {
     try {
-        const { query } = req.query; 
+        const { query } = req.query;
         const products = await productModel.find({
             name: { $regex: query, $options: 'i' }
         });
@@ -38,7 +48,7 @@ router.get("/shop/search", async (req, res) => {
 
 router.get("/sort", async (req, res) => {
     try {
-        const { sortby } = req.query; 
+        const { sortby } = req.query;
         let sortOption = {};
         if (sortby === "oldest") {
             sortOption = { createdAt: 1 };  // Sort by createdAt ascending (oldest first)
@@ -55,18 +65,69 @@ router.get("/sort", async (req, res) => {
 });
 
 
+router.get("/increase/:userId/:cartId", async (req, res) => {
+    try {
+        const { userId, cartId } = req.params;
+        const user = await userModel.findOneAndUpdate(
+            { _id: userId, "cart._id": cartId }, 
+            { $inc: { "cart.$.quantity": 1 } },
+            { new: true } // Return updated user
+        );
+
+        if (!user) {
+            return res.status(404).json({ message: "User or cart item not found" });
+        }
+
+        res.redirect("/cart")
+    } catch (error) {
+        console.error("Error updating cart:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+router.get("/decrease/:userId/:cartId", async (req, res) => {
+    try {
+        const { userId, cartId } = req.params;
+        const user = await userModel.findOne({ _id: userId, "cart._id": cartId });
+        if (!user) {
+            return res.status(404).json({ message: "User or cart item not found" });
+        }
+        const cartItem = user.cart.find(item => item._id.toString() === cartId);
+        if (!cartItem) {
+            return res.status(404).json({ message: "Cart item not found" });
+        }
+        if (cartItem.quantity > 1) {
+            await userModel.findOneAndUpdate(
+                { _id: userId, "cart._id": cartId },
+                { "$inc": { "cart.$.quantity": -1 } },
+                { new: true }
+            );
+        } else {
+            await userModel.findOneAndUpdate(
+                { _id: userId },
+                { "$pull": { "cart": { _id: cartId } } }, 
+                { new: true }
+            );
+        }
+        res.redirect("/cart");
+    } catch (error) {
+        console.error("Error updating cart:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 router.get("/cart", isloggedin, async (req, res) => {
     try {
         let user = await userModel
             .findOne({ email: req.user.email })
-            .populate("cart");
+            .populate("cart.product");
 
         if (!user || !user.cart || user.cart.length === 0) {
             return res.render("cart", { user, bill: 0 });
         }
 
         const bill = user.cart.reduce((total, item) => {
-            return total + Number(item.price) + 20 - Number(item.discount);
+            return total + Number(item.product.price) + 20 - Number(item.product.discount);
         }, 0);
         res.render("cart", { user, bill });
     } catch (err) {
@@ -82,34 +143,6 @@ router.get("/profile", isloggedin, async (req, res) => {
     res.render("myprofile", { user: req.user });
 });
 
-// router.get('/profile/edit', isloggedin, (req, res) => {
-//     res.render('edit-profile', { user: req.user });
-// });
-
-// router.post('/profile/update', isloggedin, async (req, res) => {
-//     try {
-//         const { name, email } = req.body;
-
-//         if (!name || !email) {
-//             req.flash('error', 'Name and Email are required');
-//             return res.redirect('/profile/edit');
-//         }
-//         const updatedUser = await userModel.findByIdAndUpdate(req.user._id, { name, email }, { new: true });
-
-//         if (!updatedUser) {
-//             req.flash('error', 'Failed to update profile');
-//             return res.redirect('/profile/edit');
-//         }
-
-//         req.flash('success', 'Profile updated successfully');
-//         res.redirect('/profile');
-//     } catch (err) {
-//         console.error('Error updating profile:', err);
-//         req.flash('error', 'An error occurred while updating your profile');
-//         res.redirect('/profile/edit');
-//     }
-// });
-
 router.get("/addtocart/:productid", isloggedin, async (req, res) => {
     try {
         let user = await userModel.findOne({ email: req.user.email });
@@ -118,8 +151,11 @@ router.get("/addtocart/:productid", isloggedin, async (req, res) => {
             req.flash("error", "User not found");
             return res.redirect("/shop");
         }
+        if (!user.cart.includes(req.params.productid))
+            productId = (req.params.productid);
+        user.cart.push({ product: productId, quantity: 1 });
+        user.cart.quantity = 1;
 
-        user.cart.push(req.params.productid);
         await user.save();
 
         req.flash("success", "Product added to cart");

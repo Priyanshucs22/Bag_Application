@@ -4,8 +4,9 @@ const cookeiParser = require('cookie-parser');
 const path = require('path');
 const session = require('express-session');
 const flash = require('connect-flash');
-
+const Razorpay = require('razorpay');
 require("dotenv").config();
+
 
 const ownersRouter = require('./routes/ownersRouter');
 const usersRouter = require('./routes/usersRouter');
