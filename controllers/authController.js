@@ -9,7 +9,6 @@ module.exports.registerUser = async (req, res) => {
             req.flash("error", "All fields are required");
             return res.redirect("/");
         }
-
         const existingUser = await userModel.findOne({ email });
         if (existingUser) {
             req.flash("error", "Email already in use");
@@ -23,7 +22,7 @@ module.exports.registerUser = async (req, res) => {
             fullname,
         });
         const token = generateToken(user);
-        res.cookie("token", token, { httpOnly: true });
+        res.cookie("token", token);
         req.flash("success", "Registration successful");
         return res.redirect("/shop");
     } catch (err) {
@@ -47,7 +46,7 @@ module.exports.loginUser = async (req, res) => {
             return res.redirect("/");
         }
         const token = generateToken(user);
-        res.cookie("token", token, { httpOnly: true });
+        res.cookie("token", token);
         req.flash("success", "Login successful");
         return res.redirect("/shop");
     } catch (err) {

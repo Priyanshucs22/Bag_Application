@@ -15,7 +15,7 @@ if (process.env.NODE_ENV === "production") {
                     email: process.env.Owner_Email,
                     password: hashedPassword,
                 });
-                console.log("Owner account created in development mode.");
+                console.log("Owner account created in production mode.");
             }
         } catch (err) {
             console.error("Error creating owner:", err);

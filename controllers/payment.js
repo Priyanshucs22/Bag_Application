@@ -47,9 +47,9 @@ exports.verifyPayment = async (req, res) => {
         const generatedSignature = hmac.digest("hex");
 
         if (generatedSignature === signature) {
-            return res.render("order-success", {
-                paymentId: payment_id,
-                orderId: order_id
+            return res.status(200).json({
+                success: true,
+                message: "Payment verified"
             });
         } else {
             return res.status(400).json({

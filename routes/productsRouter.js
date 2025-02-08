@@ -3,6 +3,7 @@ const router = express.Router();
 const upload = require("../config/multer-config");
 const productModel = require("../models/product-model");
 const ownerModel = require("../models/owner-model");
+const isloggedin = require("../middlewares/isLoggedin");
 
 router.post("/create", upload.single("image"), async (req, res) => {
     try {
@@ -30,7 +31,7 @@ router.post("/create", upload.single("image"), async (req, res) => {
     }
 });
 
-router.get('/all', async (req, res) => {
+router.get('/all',isloggedin, async (req, res) => {
     try {
             let products = await productModel.find();
             let success = req.flash("success");
@@ -43,17 +44,17 @@ router.get('/all', async (req, res) => {
 });
 
 
-router.get('/new-Collection', async (req, res) => {
+router.get('/new-Collection',isloggedin, async (req, res) => {
   try {
     const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 1);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
     await productModel.updateMany(
       { createdAt: { $lte: sevenDaysAgo }, isNewCollection: true },
-      { isNewCollection: false }
+      {$set:{ isNewCollection: false }}
     );
 
-    const products = await productModel.find({ isNewCollection: true });
+    const products = await productModel.find({ isNewCollection: true }).sort({ createdAt: -1 });
     const success = req.flash('success');
     res.render('new-collection', { products, success });
   } catch (err) {

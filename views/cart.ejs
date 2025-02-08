@@ -117,10 +117,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 name: "Bag Shop",
                 description: "Order Payment",
                 order_id: order.order_id,
-                handler: async function (response) {
-                    alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
-                
-                    const verifyResponse = await fetch("/verifyPayment", {
+                handler: async function (response) {                
+                    const verifyResponse = await fetch("/verifyOrder", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -132,9 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 
                     const verifyResult = await verifyResponse.json();
                     if (verifyResult.success) {
-                        alert("Payment Verified! Redirecting...");
-                        // Redirect to the order success page after payment verification
-                        window.location.href = "/order-success"; 
+                        window.location.href = `/order-success?order_id=${order.order_id}&payment_id=${response.razorpay_payment_id}`; 
                     } else {
                         alert("Payment Verification Failed.");
                     }

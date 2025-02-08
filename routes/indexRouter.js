@@ -5,14 +5,14 @@ const productModel = require("../models/product-model");
 const userModel = require("../models/user-model");
 
 const {createOrder , verifyPayment} = require('../controllers/payment');
-router.post('/createOrder',createOrder);
-router.post('/verifyOrder',verifyPayment);
-
 router.get("/", (req, res) => {
     let error = req.flash("error");
     let success = req.flash("success");
     res.render("index", { error, success, loggedin: false });
 });
+
+router.post('/createOrder',createOrder);
+router.post('/verifyOrder',verifyPayment);
 
 router.get("/shop", isloggedin, async (req, res) => {
     try {
