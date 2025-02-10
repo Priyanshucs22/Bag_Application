@@ -11,40 +11,21 @@
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
 
-    <body class="font-['helvetica_now_display']">
-        <nav
-            class="w-full fixed top-0 left-0 px-5 py-3 flex items-center bg-white shadow-md"
-        >
-            <h3 class="text-xl font-bold">BAG SHOP</h3>
+    <body class="font-sans bg-gray-100">
+        <nav class="w-full fixed top-0 left-0 px-6 py-4 flex items-center bg-white shadow-md z-50">
+            <h3 class="text-2xl font-bold">BAG SHOP</h3>
             <% var loggedin=typeof loggedin !=="undefined" ? loggedin : true %>
-            <% if(loggedin) {%>
-            <div class="flex gap-7 items-center ml-auto mr-10">
-                <a href="/shop" class="hover:underline">Shop</a>
-                <a href="/cart" class="hover:underline">Cart</a>
-                <a href="/profile" class="hover:underline">My Account</a>
-                <a href="/users/logout" class="hover:underline">Logout</a>
-                <form
-                    action="/shop/search"
-                    method="get"
-                    id="searchForm"
-                    class="flex items-center ml-10"
-                >
-                    <input
-                        type="text"
-                        name="query"
-                        id="searchInput"
-                        placeholder="Search products..."
-                        class="border-[1px] px-2 py-1 rounded-md"
-                    />
-                    <button
-                        type="submit"
-                        class="bg-blue-500 text-white px-2 py-1 ml-2 rounded-md hover:bg-blue-400"
-                    >
-                        Search
-                    </button>
+            <% if(loggedin) { %>
+            <div class="flex gap-6 items-center ml-auto">
+                <a href="/shop" class="hover:text-blue-500 transition">Shop</a>
+                <a href="/cart" class="hover:text-blue-500 transition">Cart</a>
+                <a href="/profile" class="hover:text-blue-500 transition">My Account</a>
+                <a href="/users/logout" class="hover:text-red-500 transition">Logout</a>
+                <form action="/shop/search" method="get" class="flex items-center ml-6">
+                    <input type="text" name="query" placeholder="Search..." class="border px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <button type="submit" class="bg-blue-500 text-white px-3 py-1 ml-2 rounded-md hover:bg-blue-400 transition">Search</button>
                 </form>
             </div>
-
             <% } %>
         </nav>
     </body>

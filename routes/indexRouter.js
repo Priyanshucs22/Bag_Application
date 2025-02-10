@@ -127,8 +127,10 @@ router.get("/cart", isloggedin, async (req, res) => {
         }
 
         const bill = user.cart.reduce((total, item) => {
+            if (!item.product || item.product.price == null || item.product.discount == null) return total; 
             return total + Number(item.product.price) + 20 - Number(item.product.discount);
         }, 0);
+        
         res.render("cart", { user, bill });
     } catch (err) {
         console.error(err);
