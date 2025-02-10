@@ -20,6 +20,11 @@ app.use(
     resave: false,  // Don't save if nothing changed
     saveUninitialized: false,  // Don't store empty sessions
     secret: process.env.SESSION_SECRET,  // Encrypt session data
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      ttl: 14 * 24 * 60 * 60, // Save session for 14 days
+    }),
+    cookie: { secure: true, maxAge: 60000 },
   })
 );
 
