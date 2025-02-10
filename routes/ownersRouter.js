@@ -27,7 +27,13 @@ router.get("/", (req, res) => {
     res.render("owner-login");
 });
 
-router.post("/login", async (req, res) => {
+function isAuthenticated(req, res, next) {
+    if (!req.session.user || !req.session.user.isAdmin) {
+        return res.redirect("/owners"); 
+    }
+    next();  
+}
+router.post("/login",async (req, res) => {
     try {
         const { email, password } = req.body;
         const owner = await ownerModel.findOne({ email });
@@ -57,14 +63,8 @@ router.post("/login", async (req, res) => {
     }
 });
 
-function isAuthenticated(req, res, next) {
-    if (!req.session.user || !req.session.user.isAdmin) {
-        return res.redirect("/owners"); 
-    }
-    next();  
-}
 
-router.get('/login',isAuthenticated,async (req,res)=>{
+router.get('/login',isAuthenticated, async (req,res)=>{
     let success = req.flash('success')
     let error = req.flash('error');
     let products = await productsModel.find();
