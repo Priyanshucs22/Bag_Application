@@ -42,7 +42,7 @@ router.post("/login",async (req, res) => {
             return res.redirect("/owners");
         }
 
-        const isMatch = bcrypt.compare(password, owner.password);
+        const isMatch = await bcrypt.compare(password, owner.password);
         if (isMatch) {
             req.session.user = {
                 id: owner._id,
@@ -77,7 +77,7 @@ router.get("/deleteproduct/:productid",isAuthenticated,async (req, res) => {
         const product = await productsModel.findByIdAndDelete(productId);
         if (!product) {
             req.flash("error", "Product not found");
-            return res.redirect("owners/login");
+            return res.redirect("/owners/login");
         }
         req.flash("success", "Product deleted successfully");
         res.redirect("/owners/login");

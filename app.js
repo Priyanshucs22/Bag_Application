@@ -4,7 +4,6 @@ const cookeiParser = require('cookie-parser');
 const path = require('path');
 const session = require('express-session');
 const flash = require('connect-flash');
-const Razorpay = require('razorpay');
 const MongoStore = require("connect-mongo");
 require("dotenv").config();
 
@@ -24,7 +23,6 @@ app.use(
       mongoUrl: process.env.MONGODB_URI,
       ttl: 14 * 24 * 60 * 60, // Save session for 14 days
     }),
-    cookie: { secure: true, maxAge: 60000 },
   })
 );
 
