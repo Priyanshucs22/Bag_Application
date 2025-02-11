@@ -25,14 +25,14 @@ router.get("/shop", isloggedin, async (req, res) => {
         res.redirect("/");
     }
 });
-router.get("/order-success", (req, res) => {
+router.get("/order-success",isloggedin, (req, res) => {
     res.render("order-success", {
         paymentId: req.query.payment_id,
         orderId: req.query.order_id
     });
 });
 
-router.get("/shop/search", async (req, res) => {
+router.get("/shop/search", isloggedin,async (req, res) => {
     try {
         const { query } = req.query;
         const products = await productModel.find({
@@ -46,7 +46,7 @@ router.get("/shop/search", async (req, res) => {
     }
 });
 
-router.get("/sort", async (req, res) => {
+router.get("/sort",isloggedin, async (req, res) => {
     try {
         const { sortby } = req.query;
         let sortOption = {};
@@ -65,7 +65,7 @@ router.get("/sort", async (req, res) => {
 });
 
 
-router.get("/increase/:userId/:cartId", async (req, res) => {
+router.get("/increase/:userId/:cartId", isloggedin,async (req, res) => {
     try {
         const { userId, cartId } = req.params;
         const user = await userModel.findOneAndUpdate(
@@ -85,7 +85,7 @@ router.get("/increase/:userId/:cartId", async (req, res) => {
     }
 });
 
-router.get("/decrease/:userId/:cartId", async (req, res) => {
+router.get("/decrease/:userId/:cartId",isloggedin, async (req, res) => {
     try {
         const { userId, cartId } = req.params;
         const user = await userModel.findOne({ _id: userId, "cart._id": cartId });
