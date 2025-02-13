@@ -1,7 +1,7 @@
 <%- include('./partials/header') %> 
 <% let message = error || success || ''; %>
-<% let messageType = error ? 'error' : success ? 'success' : ''; %> <%
-if(message.length > 0) { %>
+<% let messageType = error ? 'error' : success ? 'success' : ''; %> 
+<% if(message.length > 0) { %>
 <div
     class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md <%= messageType === 'error' ? 'bg-red-500' : 'bg-blue-500' %>"
     id="flash-message"
@@ -10,14 +10,14 @@ if(message.length > 0) { %>
 </div>
 <% } %>
 
-<div class="font-sans w-full h-screen flex px-20">
-    <div class="w-1/2 flex items-center justify-center h-screen">
-        <div class="w-full px-32">
-            <h3 class="text-4xl">
+<div class="font-sans w-full h-screen flex flex-col md:flex-row px-5 md:px-20">
+    <div class="w-full md:w-1/2 flex items-center justify-center h-1/2 md:h-screen">
+        <div class="w-full px-5 md:px-32">
+            <h3 class="text-2xl md:text-4xl">
                 Welcome to
                 <span class="text-blue-400 font-semibold">Bag Shop</span>
             </h3>
-            <h4 class="text-2xl mb-5">Create your account</h4>
+            <h4 class="text-lg md:text-2xl mb-5">Create your account</h4>
             <form autocomplete="off" action="/users/register" method="post">
                 <input
                     class="bg-zinc-100 block w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
@@ -38,16 +38,16 @@ if(message.length > 0) { %>
                     name="password"
                 />
                 <input
-                    class="px-5 rounded-full py-3 mt-2 bg-blue-500 text-white hover:bg-blue-600"
+                    class="px-5 rounded-full py-3 mt-2 bg-blue-500 text-white hover:bg-blue-600 w-full md:w-auto"
                     type="submit"
                     value="Create My Account"
                 />
             </form>
         </div>
     </div>
-    <div class="w-1/2 flex items-center justify-center h-screen">
-        <div class="w-full px-32">
-            <h4 class="text-2xl capitalize mb-5">Login your account</h4>
+    <div class="w-full md:w-1/2 flex items-center justify-center h-1/2 md:h-screen">
+        <div class="w-full px-5 md:px-32">
+            <h4 class="text-lg md:text-2xl capitalize mb-5">Login your account</h4>
             <form autocomplete="off" action="/users/login" method="post">
                 <input
                     class="block bg-zinc-100 w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
@@ -62,7 +62,7 @@ if(message.length > 0) { %>
                     name="password"
                 />
                 <input
-                    class="px-5 block w-1/5 rounded-full py-3 mt-2 bg-blue-500 text-white hover:bg-blue-600"
+                    class="px-5 rounded-full py-3 mt-2 bg-blue-500 text-white hover:bg-blue-600 w-full md:w-auto"
                     type="submit"
                     value="Login"
                 />
