@@ -1,3 +1,22 @@
 </body>
-
+<script>
+    document.getElementById('searchInput').addEventListener('input', searchProducts);
+    
+    function searchProducts() {
+        let query = document.getElementById('searchInput').value.toLowerCase();
+        let products = document.querySelectorAll('.bg-white.rounded-lg.shadow-md'); // Select all product cards
+    
+        products.forEach(product => {
+            let name = product.querySelector('h3').innerText.toLowerCase();
+            let price = product.querySelector('h4').innerText.toLowerCase();
+    
+            if (name.includes(query) || price.includes(query)) {
+                product.style.display = "block";
+            } else {
+                product.style.display = "none";
+            }
+        });
+    }
+    </script>
+    
 </html>

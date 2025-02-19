@@ -32,20 +32,6 @@ router.get("/order-success",isloggedin, (req, res) => {
     });
 });
 
-router.get("/shop/search", isloggedin,async (req, res) => {
-    try {
-        const { query } = req.query;
-        const products = await productModel.find({
-            name: { $regex: query, $options: 'i' }
-        });
-        let success = req.flash("success");
-        res.render("shop", { products, success });
-    } catch (error) {
-        console.error("Error searching products:", error);
-        res.status(500).send("Internal Server Error");
-    }
-});
-
 router.get("/sort",isloggedin, async (req, res) => {
     try {
         const { sortby } = req.query;
