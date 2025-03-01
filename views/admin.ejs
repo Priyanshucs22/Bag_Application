@@ -19,6 +19,7 @@
                 <nav class="flex flex-col gap-4">
                     <a href="/owners/login" class="hover:text-gray-400">All Products</a>
                     <a href="/owners/admin" class="hover:text-gray-400">Create New Product</a>
+                    <a href="/owners/admin/orders" class="hover:text-gray-400">View Paid Orders</a>
                     <a href="/owners/logout" class="text-red-400 hover:text-red-300">Logout</a>
                 </nav>
             </aside>
@@ -27,13 +28,15 @@
             <main class="flex-1 p-10 overflow-y-auto">
                 <!-- Flash Message -->
                 <% let message = error || success || ''; %>
-                <% let messageType = error ? 'error' : success ? 'success' : ''; %>
-                <% if(message.length > 0) { %>
+                <% let messageType = error ? 'error' : success ? 'success' : ''; %> 
+                <% if (message.length > 0) { %>
                 <div
-                    class="fixed top-5 left-1/2 transform -translate-x-1/2 p-3 rounded-md text-white shadow-md <%= messageType === 'error' ? 'bg-red-500' : 'bg-blue-500' %>"
-                    id="flash-message"
-                >
-                    <span><%= message %></span>
+                    class="fixed top-16 left-1/2 -translate-x-1/2 px-5 py-3 rounded-md 
+                        <%= messageType === 'error' ? 'bg-red-500' : 'bg-blue-500' %> 
+                        text-white text-center w-full sm:w-4/5 md:w-1/3 flex justify-center items-center shadow-md z-50"
+                        id="flash-message"
+                    >
+                        <span class="inline-block"> <%= message %> </span>
                 </div>
                 <% } %>
 
@@ -46,19 +49,26 @@
                 <!-- Products Grid -->
                 <div class="grid grid-cols-5 gap-6">
                     <% products.forEach(function(product) { %>
-                    <div class="bg-white shadow-md rounded-lg overflow-hidden">
-                        <div class="h-52 flex items-center justify-center bg-[<%= product.bgcolor %>]">
-                            <img class="h-[12rem]" src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="Product Image" />
-                        </div>
-                        <div class="p-4 bg-[<%= product.panelcolor %>] text-[<%= product.textcolor %>] flex justify-between items-center">
-                            <div>
-                                <h3 class="font-semibold"><%= product.name %></h3>
-                                <h4 class="text-lg font-medium">₹ <%= product.price %></h4>
+                        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                            <div class="h-52 flex items-center justify-center bg-[<%= product.bgcolor %>]">
+                                <img class="h-[12rem]" src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="Product Image" />
                             </div>
-                            <a href="/owners/deleteproduct/<%= product._id %>" class="text-red-500 hover:underline">Delete</a>
+                            <div class="p-4 bg-[<%= product.panelcolor %>] text-[<%= product.textcolor %>]">
+                                <h3 class="font-semibold"><%= product.name %></h3>
+                                <h4 class="text-lg font-medium">₹ <%= product.price - product.discount %></h4>
+                                <div class="flex justify-end gap-3 mt-3">
+                                    <a href="/owners/editproduct/<%= product._id %>" 
+                                       class="px-4 py-0.3 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition-all">
+                                       ✏ Edit
+                                    </a>
+                                    <a href="/owners/deleteproduct/<%= product._id %>" 
+                                       class="px-4 py-0.3 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition-all">
+                                       🗑 Delete
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <% }) %>
+                    <% }) %>                    
                 </div>
             </main>
         </div>

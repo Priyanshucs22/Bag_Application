@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paid Orders - Bag Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-10">
+    <h1 class="text-3xl font-bold mb-5">Paid Orders</h1>
+    <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
+        <thead>
+            <tr class="bg-gray-800 text-white">
+                <th class="p-3">User</th>
+                <th class="p-3">Product</th>
+                <th class="p-3">Price</th>
+                <th class="p-3">Payment Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% orders.forEach(order => { %>
+                <tr class="border-b text-center">
+                    <td class="p-3"><%= order.userId.name %> (<%= order.userId.email %>)</td>
+                    <td class="p-3"><%= order.productId.name %></td>
+                    <td class="p-3">₹<%= order.productId.price - order.productId.discount %></td>
+                    <td class="p-3 text-green-500 font-bold"><%= order.status %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</body>
+</html>

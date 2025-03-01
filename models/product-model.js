@@ -13,7 +13,7 @@ const productSchema = new mongoose.Schema({
     sales: { type: Number, default: 0 },
     popularity: { type: Number, default: 0 },
     bgcolor:String,
-    panecolor:String,
+    panelcolor:String,
     textcolor:String,
 });
 

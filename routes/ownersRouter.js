@@ -2,7 +2,10 @@ const express = require("express");
 const router = express.Router();
 const ownerModel = require("../models/owner-model");
 const productsModel = require("../models/product-model");
+const upload = require("../config/multer-config");
 const bcrypt = require("bcrypt");
+const ordersModel = require("../models/orders-model");
+
 if (process.env.NODE_ENV === "production") {
     (async () => {
         try {
@@ -88,6 +91,48 @@ router.get("/deleteproduct/:productid",isAuthenticated,async (req, res) => {
     }
 });
 
+router.get("/editproduct/:productid", isAuthenticated, async (req, res) => {
+    try {
+        const productId = req.params.productid;
+        const product = await productsModel.findById(productId);
+
+        if (!product) {
+            req.flash("error", "Product not found");
+            return res.redirect("/owners/login");
+        }
+
+        const error = req.flash("error"); 
+        res.render("editproduct", { product, error });
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to load product");
+        res.redirect("/owners/login");
+    }
+});
+
+
+router.post("/products/update/:productid",upload.single("image"), isAuthenticated, async (req, res) => {
+    try {
+        const productId = req.params.productid;
+        const { name, price, discount, bgcolor, panelcolor, textcolor } = req.body;
+        let updateData = { name, price, discount, bgcolor, panelcolor, textcolor };
+        if (req.file) {
+            updateData.image = req.file.buffer; 
+        }
+        const updatedProduct = await productsModel.findByIdAndUpdate(productId, updateData, { new: true });
+        if (!updatedProduct) {
+            req.flash("error", "Product not found");
+            return res.redirect("/owners/login");
+        }
+        req.flash("success", "Product updated successfully!");
+        res.redirect("/owners/login"); 
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to update product");
+        res.redirect(`/editproduct/${req.params.productid}`);
+    }
+});
+
 router.get("/deleteall",isAuthenticated,async (req,res)=>{
     try {
         await productsModel.deleteMany({});
@@ -103,6 +148,17 @@ router.get("/deleteall",isAuthenticated,async (req,res)=>{
 router.get("/admin",isAuthenticated, (req, res) => {
     let success = req.flash("success");
     res.render("createproducts", { success });
+});
+
+router.get("/admin/orders", isAuthenticated, async (req, res) => {
+    try {
+        const orders = await ordersModel.find({ status: "paid" }).populate("userId productId");
+        res.render("admin-orders", { orders });
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to load orders");
+        res.redirect("/owners/admin");
+    }
 });
 
 
