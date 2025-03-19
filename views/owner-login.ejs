@@ -1,46 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Admin Login</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
-            rel="stylesheet"
-        />
-        <script src="https://cdn.tailwindcss.com"></script>
-    </head>
-    <body class="font-['helvetica_now_display'] bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center h-screen">
-        <div class="w-1/3 flex items-center justify-center h-auto bg-white shadow-xl rounded-lg p-10 backdrop-blur-md">
-            <div class="w-full max-w-md">
-                <h4 class="text-3xl font-semibold mb-6 text-gray-800 text-center">Admin Access</h4>
-                <form action="/owners/login" method="post" class="space-y-6">
-                    <div class="relative">
-                        <i class="ri-mail-line absolute left-3 top-3 text-gray-500"></i>
-                        <input
-                            class="block w-full pl-10 pr-3 py-3 bg-gray-100 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
-                            type="email"
-                            placeholder="Email"
-                            name="email"
-                        />
-                    </div>
-                    <div class="relative">
-                        <i class="ri-lock-2-line absolute left-3 top-3 text-gray-500"></i>
-                        <input
-                            class="block w-full pl-10 pr-3 py-3 bg-gray-100 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
-                            type="password"
-                            placeholder="Password"
-                            name="password"
-                        />
-                    </div>
-                    <button
-                        class="w-full py-3 rounded-md bg-blue-500 text-white font-medium text-lg shadow-md hover:bg-blue-600 transition-all duration-300 transform hover:scale-105"
-                        type="submit"
-                    >
-                        Login
-                    </button>
-                </form>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Glassmorphism Effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="font-sans bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center min-h-screen px-5">
+
+    <div class="w-full max-w-md p-8 glass text-white">
+        <h4 class="text-3xl font-semibold mb-6 text-center">Admin Access</h4>
+
+        <form action="/owners/login" method="post" class="space-y-6">
+            <!-- Email Input -->
+            <div class="relative">
+                <i class="ri-mail-line absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-300 text-lg"></i>
+                <input
+                    class="block w-full pl-12 pr-4 py-3 bg-white/20 border border-white/30 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none text-white placeholder-gray-300"
+                    type="email"
+                    placeholder="Email"
+                    name="email"
+                    required
+                />
             </div>
-        </div>
-    </body>
+
+            <!-- Password Input -->
+            <div class="relative">
+                <i class="ri-lock-2-line absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-300 text-lg"></i>
+                <input
+                    class="block w-full pl-12 pr-4 py-3 bg-white/20 border border-white/30 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none text-white placeholder-gray-300"
+                    type="password"
+                    placeholder="Password"
+                    name="password"
+                    required
+                />
+            </div>
+
+            <!-- Login Button -->
+            <button
+                class="w-full py-3 rounded-md bg-blue-500 text-white font-medium text-lg shadow-md hover:bg-blue-600 transition-all duration-300 transform hover:scale-105"
+                type="submit"
+            >
+                Login
+            </button>
+        </form>
+    </div>
+
+</body>
 </html>

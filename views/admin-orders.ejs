@@ -5,28 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paid Orders - Bag Shop</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Makes sidebar fixed and content scrollable */
+        .content {
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 100vh;
+            padding: 20px;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 p-10">
-    <h1 class="text-3xl font-bold mb-5">Paid Orders</h1>
-    <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
-        <thead>
-            <tr class="bg-gray-800 text-white">
-                <th class="p-3">User</th>
-                <th class="p-3">Product</th>
-                <th class="p-3">Price</th>
-                <th class="p-3">Payment Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% orders.forEach(order => { %>
-                <tr class="border-b text-center">
-                    <td class="p-3"><%= order.userId.name %> (<%= order.userId.email %>)</td>
-                    <td class="p-3"><%= order.productId.name %></td>
-                    <td class="p-3">₹<%= order.productId.price - order.productId.discount %></td>
-                    <td class="p-3 text-green-500 font-bold"><%= order.status %></td>
-                </tr>
-            <% }) %>
-        </tbody>
-    </table>
+<body class="font-sans bg-gray-100 flex h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-900 text-white p-6 flex flex-col fixed h-screen">
+        <h2 class="text-2xl font-bold mb-6">Owner Panel</h2>
+        <nav class="flex flex-col gap-4">
+            <a href="/owners/login" class="hover:text-gray-400">All Products</a>
+            <a href="/owners/admin" class="hover:text-gray-400">Create New Product</a>
+            <a href="/owners/admin/orders" class="hover:text-gray-400">View Paid Orders</a>
+            <a href="/owners/logout" class="text-red-400 hover:text-red-300">Logout</a>
+        </nav>
+    </aside>
+
+    <!-- Scrollable Content -->
+    <div class="content ml-64">
+        <h1 class="text-3xl font-bold mb-5">Paid Orders</h1>
+        
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gray-800 text-white">
+                        <th class="p-3">User</th>
+                        <th class="p-3">Products</th>
+                        <th class="p-3">Total Amount</th>
+                        <th class="p-3">Payment ID</th>
+                        <th class="p-3">Status</th>
+                        <th class="p-3">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orders.forEach(order => { %>
+                        <tr class="border-b text-center bg-gray-50 hover:bg-gray-100">
+                            <td class="p-3 font-semibold">
+                                <%= order.userId.fullname %> (<%= order.userId.email %>)
+                            </td>
+                            <td class="p-3 text-left">
+                                <ul>
+                                    <% order.products.forEach(product => { %>
+                                        <li class="mb-2">
+                                            <span class="font-semibold"><%= product.productId.name %></span> 
+                                            (Qty: <%= product.quantity %>) - ₹<%= product.totalPrice %>
+                                        </li>
+                                    <% }); %>
+                                </ul>
+                            </td>
+                            <td class="p-3 font-semibold">₹<%= order.totalAmount %></td>
+                            <td class="p-3 text-blue-600 font-medium"><%= order.paymentId || "N/A" %></td>
+                            <td class="p-3 font-bold <%= order.status === 'paid' ? 'text-green-500' : 'text-gray-600' %>">
+                                <%= order.status %>
+                            </td>
+                            <td class="p-3"><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </body>
 </html>
