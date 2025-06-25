@@ -43,5 +43,8 @@
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "description": ""
+  "description": "",
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }

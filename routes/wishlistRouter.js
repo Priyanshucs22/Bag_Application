@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const wishlistModel = require("../models/wishlist-model");
 const productModel = require("../models/product-model");
-const isloggedin = require("../middlewares/isloggedin");
+const isloggedin = require("../middlewares/isLoggedin");
 
 // Toggle product in wishlist
 router.post("/toggle/:productId", isloggedin, async (req, res) => {
