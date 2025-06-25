@@ -3,59 +3,191 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Login</title>
+    <title>Admin Login - BAG SHOP</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Glassmorphism Effect */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Enhanced Glassmorphism Effect */
         .glass {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-radius: 15px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        }
+
+        .input-modern {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .input-modern:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-modern {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -5px rgba(102, 126, 234, 0.6);
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
         }
     </style>
 </head>
-<body class="font-sans bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center min-h-screen px-5">
+<body class="font-sans gradient-bg flex items-center justify-center min-h-screen px-5 relative">
+    <!-- Floating Background Shapes -->
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
 
-    <div class="w-full max-w-md p-8 glass text-white">
-        <h4 class="text-3xl font-semibold mb-6 text-center">Admin Access</h4>
+    <div class="w-full max-w-md relative z-10">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <i class="ri-shield-user-line text-white text-3xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-white mb-2">Admin Portal</h1>
+            <p class="text-white/80">Secure access to your dashboard</p>
+        </div>
 
-        <form action="/owners/login" method="post" class="space-y-6">
-            <!-- Email Input -->
-            <div class="relative">
-                <i class="ri-mail-line absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-300 text-lg"></i>
-                <input
-                    class="block w-full pl-12 pr-4 py-3 bg-white/20 border border-white/30 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none text-white placeholder-gray-300"
-                    type="email"
-                    placeholder="Email"
-                    name="email"
-                    required
-                />
+        <!-- Login Form -->
+        <div class="glass p-8">
+            <div class="mb-6">
+                <h2 class="text-2xl font-semibold text-white text-center mb-2">Welcome Back</h2>
+                <p class="text-white/70 text-center text-sm">Please sign in to your admin account</p>
             </div>
 
-            <!-- Password Input -->
-            <div class="relative">
-                <i class="ri-lock-2-line absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-300 text-lg"></i>
-                <input
-                    class="block w-full pl-12 pr-4 py-3 bg-white/20 border border-white/30 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none text-white placeholder-gray-300"
-                    type="password"
-                    placeholder="Password"
-                    name="password"
-                    required
-                />
-            </div>
+            <form action="/owners/login" method="post" class="space-y-6">
+                <!-- Email Input -->
+                <div class="relative">
+                    <label class="block text-white/90 text-sm font-medium mb-2">
+                        <i class="ri-mail-line mr-2"></i>
+                        Email Address
+                    </label>
+                    <div class="relative">
+                        <i class="ri-mail-line absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 text-lg"></i>
+                        <input
+                            class="input-modern block w-full pl-12 pr-4 py-4 rounded-xl focus:outline-none text-white placeholder-white/50"
+                            type="email"
+                            placeholder="Enter your admin email"
+                            name="email"
+                            required
+                        />
+                    </div>
+                </div>
 
-            <!-- Login Button -->
-            <button
-                class="w-full py-3 rounded-md bg-blue-500 text-white font-medium text-lg shadow-md hover:bg-blue-600 transition-all duration-300 transform hover:scale-105"
-                type="submit"
-            >
-                Login
-            </button>
-        </form>
+                <!-- Password Input -->
+                <div class="relative">
+                    <label class="block text-white/90 text-sm font-medium mb-2">
+                        <i class="ri-lock-2-line mr-2"></i>
+                        Password
+                    </label>
+                    <div class="relative">
+                        <i class="ri-lock-2-line absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 text-lg"></i>
+                        <input
+                            class="input-modern block w-full pl-12 pr-4 py-4 rounded-xl focus:outline-none text-white placeholder-white/50"
+                            type="password"
+                            placeholder="Enter your password"
+                            name="password"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <!-- Login Button -->
+                <button
+                    class="btn-modern w-full py-4 rounded-xl text-white font-semibold text-lg flex items-center justify-center space-x-2"
+                    type="submit"
+                >
+                    <i class="ri-login-box-line text-xl"></i>
+                    <span>Access Dashboard</span>
+                </button>
+            </form>
+
+            <!-- Footer -->
+            <div class="mt-6 text-center">
+                <p class="text-white/60 text-sm">
+                    <i class="ri-shield-check-line mr-1"></i>
+                    Secure admin access
+                </p>
+            </div>
+        </div>
+
+        <!-- Bottom Text -->
+        <div class="text-center mt-8">
+            <p class="text-white/70 text-sm">
+                <i class="ri-shopping-bag-line mr-1"></i>
+                BAG SHOP Admin Portal
+            </p>
+        </div>
     </div>
 
 </body>

@@ -1,81 +1,176 @@
 <%- include('./partials/header') %>
 
-    <div class="container mx-auto mt-20 px-4 sm:px-6 flex flex-col md:flex-row gap-6">
+<div class="page-container">
+    <div class="page-bg-elements"></div>
+    <main class="page-content">
+        <div class="content-wrapper flex flex-col lg:flex-row gap-8">
         <% if (user.cart && user.cart.length> 0) { %>
             <!-- Left Side: Cart Products -->
-            <div class="md:w-2/3 bg-white shadow-lg rounded-lg p-6">
-                <h2 class="text-2xl font-bold mb-4">Shopping Cart</h2>
+            <div class="lg:w-2/3 card-modern p-8">
+                <div class="flex items-center mb-8">
+                    <div class="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center mr-4">
+                        <i class="ri-shopping-cart-line text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800">Shopping Cart</h2>
+                        <p class="text-gray-600"><%= user.cart.length %> item<%= user.cart.length > 1 ? 's' : '' %> in your cart</p>
+                    </div>
+                </div>
 
-                <% user.cart.forEach(function(item) { %>
-                    <% if (item.product) { %>
-                        <div class="flex items-center bg-gray-100 shadow-md rounded-lg overflow-hidden p-5 mb-5">
-                            <!-- Product Image -->
-                            <div class="w-1/4 flex justify-center items-center p-3 bg-[<%= item.product.bgcolor %>]">
-                                <img class="h-36 sm:h-40 object-contain"
-                                    src="data:image/jpeg;base64,<%= item.product.image ? item.product.image.toString('base64') : '' %>"
-                                    alt="<%= item.product.name || 'No Name' %>">
-                            </div>
+                <div class="space-y-6">
+                    <% user.cart.forEach(function(item) { %>
+                        <% if (item.product) { %>
+                            <div class="card-modern overflow-hidden hover-scale transition-modern">
+                                <div class="flex flex-col sm:flex-row">
+                                    <!-- Product Image -->
+                                    <div class="sm:w-1/3 flex justify-center items-center p-6" style="background: <%= item.product.bgcolor %>;">
+                                        <img class="h-32 sm:h-40 object-contain"
+                                            src="data:image/jpeg;base64,<%= item.product.image ? item.product.image.toString('base64') : '' %>"
+                                            alt="<%= item.product.name || 'No Name' %>">
+                                    </div>
 
-                            <!-- Product Details -->
-                            <div class="w-3/4 p-5 flex flex-col">
-                                <div class="flex justify-between items-center mb-3">
-                                    <h3 class="text-lg sm:text-xl font-semibold">
-                                        <%= item.product.name %>
-                                    </h3>
-                                    <!-- Quantity Buttons -->
-                                    <div class="flex items-center space-x-3">
-                                        <a href="/increase/<%=user._id%>/<%=item._id%>"
-                                            class="increase-btn bg-blue-600 text-white px-3 py-1 rounded-full hover:bg-blue-500 transition">+</a>
-                                        <span class="px-4 py-2 rounded-lg bg-gray-200 font-semibold">
-                                            <%= item.quantity %>
-                                        </span>
-                                        <a href="/decrease/<%=user._id%>/<%=item._id%>"
-                                            class="decrease-btn bg-red-600 text-white px-3 py-1 rounded-full hover:bg-red-500 transition">-</a>
+                                    <!-- Product Details -->
+                                    <div class="sm:w-2/3 p-6 flex flex-col justify-between">
+                                        <div class="flex flex-col sm:flex-row justify-between items-start mb-4">
+                                            <div class="flex-1 mb-4 sm:mb-0">
+                                                <h3 class="text-xl font-bold text-gray-800 mb-2">
+                                                    <%= item.product.name %>
+                                                </h3>
+                                                <div class="space-y-2">
+                                                    <div class="flex items-center space-x-4">
+                                                        <span class="text-gray-600">Unit Price:</span>
+                                                        <span class="font-semibold text-lg">₹<%= item.product.price %></span>
+                                                    </div>
+                                                    <% if (item.product.discount && item.product.discount > 0) { %>
+                                                    <div class="flex items-center space-x-4">
+                                                        <span class="text-gray-600">Discount:</span>
+                                                        <span class="font-semibold text-green-600">-₹<%= item.product.discount %></span>
+                                                    </div>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+
+                                            <!-- Quantity Controls -->
+                                            <div class="flex flex-col items-end space-y-3">
+                                                <div class="flex items-center space-x-3 glass rounded-2xl p-2">
+                                                    <a href="/decrease/<%=user._id%>/<%=item._id%>"
+                                                        class="decrease-btn w-10 h-10 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-modern flex items-center justify-center">
+                                                        <i class="ri-subtract-line"></i>
+                                                    </a>
+                                                    <span class="px-4 py-2 rounded-xl bg-white font-bold text-lg min-w-[3rem] text-center">
+                                                        <%= item.quantity %>
+                                                    </span>
+                                                    <a href="/increase/<%=user._id%>/<%=item._id%>"
+                                                        class="increase-btn w-10 h-10 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-modern flex items-center justify-center">
+                                                        <i class="ri-add-line"></i>
+                                                    </a>
+                                                </div>
+
+                                                <!-- Item Total -->
+                                                <div class="text-right">
+                                                    <p class="text-sm text-gray-600">Item Total</p>
+                                                    <p class="text-2xl font-bold text-gray-800">
+                                                        ₹<span class="total-amount"
+                                                            data-amount="<%= (Number(item.product.price) - Number(item.product.discount)) * item.quantity %>">
+                                                            <%= (Number(item.product.price) - Number(item.product.discount)) * item.quantity %>
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Remove Button -->
+                                        <div class="flex justify-end">
+                                            <button onclick="removeItem('<%=item._id%>')"
+                                                    class="text-red-500 hover:text-red-600 transition-modern flex items-center space-x-2">
+                                                <i class="ri-delete-bin-line"></i>
+                                                <span>Remove</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="text-sm sm:text-base space-y-1">
-                                    <p class="text-gray-700">Price: <span class="font-semibold">₹<%= item.product.price
-                                                %></span></p>
-                                    <p class="text-green-600">Discount: <span class="font-semibold">₹<%=
-                                                item.product.discount %></span></p>
-                                    <p class="text-gray-800 font-bold text-lg">Total: ₹
-                                        <span class="total-amount"
-                                            data-amount="<%= (Number(item.product.price) - Number(item.product.discount)) * item.quantity %>">
-                                            <%= (Number(item.product.price) - Number(item.product.discount)) *
-                                                item.quantity %>
-                                        </span>
-                                    </p>
-                                </div>
                             </div>
-                        </div>
                         <% } %>
-                            <% }); %>
+                    <% }); %>
+                </div>
             </div>
 
             <!-- Right Side: Cart Summary & Payment Button -->
-            <div class="md:w-1/3 bg-white shadow-lg rounded-lg p-6 h-fit">
-                <h4 class="text-xl font-semibold border-b pb-3 mb-4">Order Summary</h4>
-                <div class="text-lg space-y-2 mb-4">
-                    <p class="flex justify-between">Buyer: <span class="font-semibold"><span id="buyer"><%=user.email%>
-                            </span></span></p>
-                    <p class="flex justify-between">Subtotal: <span class="font-semibold">₹<span
-                                id="subTotal">0</span></span></p>
-                    <p class="flex justify-between text-green-600">Delivery Fee: <span class="font-semibold">₹20</span>
-                    </p>
-                    <hr>
-                    <p class="flex justify-between font-bold text-xl">Total: <span class="text-green-600">₹<span
-                                id="totalAmount">0</span></span></p>
+            <div class="lg:w-1/3 h-fit">
+                <div class="card-modern p-8 sticky top-24">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 gradient-success rounded-xl flex items-center justify-center mr-3">
+                            <i class="ri-file-list-3-line text-white"></i>
+                        </div>
+                        <h4 class="text-2xl font-bold text-gray-800">Order Summary</h4>
+                    </div>
+
+                    <div class="space-y-4 mb-6">
+                        <div class="glass p-4 rounded-xl">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-gray-600 flex items-center">
+                                    <i class="ri-user-line mr-2"></i>
+                                    Customer
+                                </span>
+                                <span class="font-semibold text-gray-800" id="buyer"><%=user.email%></span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Subtotal</span>
+                                <span class="font-semibold text-lg">₹<span id="subTotal">0</span></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600 flex items-center">
+                                    <i class="ri-truck-line mr-2"></i>
+                                    Delivery Fee
+                                </span>
+                                <span class="font-semibold text-green-600">₹20</span>
+                            </div>
+                            <hr class="border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xl font-bold text-gray-800">Total Amount</span>
+                                <span class="text-2xl font-bold gradient-primary bg-clip-text text-transparent">
+                                    ₹<span id="totalAmount">0</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="payButton"
+                        class="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-lg py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl mb-4 flex items-center justify-center space-x-2">
+                        <i class="ri-secure-payment-line text-xl"></i>
+                        <span>Proceed to Payment</span>
+                    </button>
+
+                    <div class="text-center text-sm text-gray-500">
+                        <i class="ri-shield-check-line mr-1"></i>
+                        Secure payment powered by Razorpay
+                    </div>
                 </div>
-                <button id="payButton"
-                    class="w-full bg-green-500 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-green-600 transition">Pay
-                    Now</button>
             </div>
             <% } else { %>
-                <p class="text-center text-gray-500 text-lg w-full">Your cart is empty.</p>
-                <% } %>
-    </div>
+                <!-- Empty Cart State -->
+                <div class="w-full flex flex-col items-center justify-center py-20">
+                    <div class="w-32 h-32 gradient-primary rounded-full flex items-center justify-center mb-8 opacity-20">
+                        <i class="ri-shopping-cart-line text-4xl text-white"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-800 mb-4">Your Cart is Empty</h3>
+                    <p class="text-gray-600 text-center max-w-md mb-8">
+                        Looks like you haven't added any items to your cart yet. Start shopping to fill it up!
+                    </p>
+                    <a href="/shop" class="btn-modern-primary text-lg inline-block">
+                        <i class="ri-shopping-bag-line mr-2"></i>
+                        Start Shopping
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </main>
+</div>
 
-    <%- include('./partials/footer') %>
+<%- include('./partials/footer') %>
 
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
         <script>
@@ -90,27 +185,93 @@
                     let deliveryFee = 20;
                     let totalAmount = subTotal > 0 ? subTotal + deliveryFee : 0;
 
-                    document.querySelector("#subTotal").textContent = subTotal.toFixed(2);
-                    document.querySelector("#totalAmount").textContent = totalAmount.toFixed(2);
+                    document.querySelector("#subTotal").textContent = subTotal.toFixed(0);
+                    document.querySelector("#totalAmount").textContent = totalAmount.toFixed(0);
                 }
 
+                // Add loading states to quantity buttons
+                // Enhanced quantity buttons with cart count update
                 document.querySelectorAll(".increase-btn, .decrease-btn").forEach(button => {
-                    button.addEventListener("click", () => {
-                        setTimeout(updateTotal, 500);
+                    button.addEventListener("click", (e) => {
+                        e.preventDefault(); // Prevent default navigation
+
+                        const btn = e.target.closest('a');
+                        const originalContent = btn.innerHTML;
+
+                        btn.innerHTML = '<i class="ri-loader-4-line animate-spin"></i>';
+                        btn.style.pointerEvents = 'none';
+
+                        // Make AJAX request
+                        fetch(btn.href)
+                            .then(response => {
+                                if (response.ok) {
+                                    // Update cart count in navbar
+                                    if (window.loadCartCount) {
+                                        window.loadCartCount();
+                                    }
+
+                                    // Reload the page to show updated quantities
+                                    setTimeout(() => {
+                                        window.location.reload();
+                                    }, 500);
+                                } else {
+                                    throw new Error('Failed to update cart');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Cart update error:', error);
+                                btn.innerHTML = originalContent;
+                                btn.style.pointerEvents = 'auto';
+                            });
                     });
                 });
 
                 updateTotal();
 
+                // Enhanced remove item function with cart count update
+                window.removeItem = function(itemId) {
+                    if (confirm('Are you sure you want to remove this item from your cart?')) {
+                        // Create remove URL (you'll need to implement this route)
+                        const removeUrl = `/cart/remove/${itemId}`;
+
+                        // Make AJAX request to remove item
+                        fetch(removeUrl, { method: 'POST' })
+                            .then(response => {
+                                if (response.ok) {
+                                    // Update cart count in navbar
+                                    if (window.loadCartCount) {
+                                        window.loadCartCount();
+                                    }
+
+                                    // Reload the page to show updated cart
+                                    window.location.reload();
+                                } else {
+                                    throw new Error('Failed to remove item');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Remove item error:', error);
+                                alert('Failed to remove item. Please try again.');
+                            });
+                    }
+                };
+
                 document.getElementById("payButton").addEventListener("click", async function () {
                     try {
+                        const payBtn = this;
+                        const originalText = payBtn.innerHTML;
+
+                        // Add loading state
+                        payBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Processing...';
+                        payBtn.disabled = true;
+
                         let amount = parseFloat(document.getElementById("totalAmount").textContent);
-
                         let user_email = document.getElementById("buyer").innerText;
-
 
                         if (isNaN(amount) || amount <= 0) {
                             alert("Invalid order amount. Please add items to the cart.");
+                            payBtn.innerHTML = originalText;
+                            payBtn.disabled = false;
                             return;
                         }
 
@@ -161,20 +322,52 @@
                             },
                             prefill: {
                                 name: "Customer",
-                                email: "customer@example.com"
+                                email: user_email
                             },
-                            theme: { color: "#3399cc" }
+                            theme: {
+                                color: "#667eea",
+                                backdrop_color: "rgba(0, 0, 0, 0.6)"
+                            },
+                            modal: {
+                                ondismiss: function() {
+                                    payBtn.innerHTML = originalText;
+                                    payBtn.disabled = false;
+                                }
+                            }
                         };
 
                         const rzp = new Razorpay(options);
+
                         rzp.on("payment.failed", response => {
-                            alert("Payment Failed: " + response.error.description);
+                            payBtn.innerHTML = originalText;
+                            payBtn.disabled = false;
+
+                            // Show modern error message
+                            const errorDiv = document.createElement('div');
+                            errorDiv.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 p-4 gradient-secondary text-white font-semibold rounded-2xl shadow-modern-lg z-50 glass';
+                            errorDiv.innerHTML = `<i class="ri-error-warning-line mr-2"></i>Payment Failed: ${response.error.description}`;
+                            document.body.appendChild(errorDiv);
+
+                            setTimeout(() => {
+                                errorDiv.remove();
+                            }, 5000);
                         });
 
                         rzp.open();
                     } catch (error) {
                         console.error("Error:", error);
-                        alert("Something went wrong. Please try again.");
+                        payBtn.innerHTML = originalText;
+                        payBtn.disabled = false;
+
+                        // Show modern error message
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 p-4 gradient-secondary text-white font-semibold rounded-2xl shadow-modern-lg z-50 glass';
+                        errorDiv.innerHTML = '<i class="ri-error-warning-line mr-2"></i>Something went wrong. Please try again.';
+                        document.body.appendChild(errorDiv);
+
+                        setTimeout(() => {
+                            errorDiv.remove();
+                        }, 5000);
                     }
                 });
             });

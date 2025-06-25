@@ -10,7 +10,8 @@ const orderSchema = new mongoose.Schema({
     ],
     totalAmount: { type: Number, required: true }, // Sum of all product totalPrice
     status: { type: String, enum: ["pending", "paid", "shipped", "delivered"], default: "pending" },
-    paymentId: { type: String }, 
+    paymentId: { type: String },
+    razorpayOrderId: { type: String }, // Store Razorpay order ID for tracking
     createdAt: { type: Date, default: Date.now }
 });
 const Order = mongoose.model('order', orderSchema);

@@ -1,0 +1,150 @@
+<%- include('./partials/header') %>
+
+<main id="main-content" class="pt-24 pb-12 section-padding" role="main">
+    <div class="container-modern">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="heading-primary mb-4">UI Components Demo</h1>
+            <p class="text-muted text-lg">Showcase of modern UI components and interactions</p>
+        </div>
+
+        <!-- Buttons Section -->
+        <section class="mb-12">
+            <h2 class="heading-secondary mb-6">Modern Buttons</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card-modern p-6">
+                    <h3 class="text-lg font-semibold mb-4">Primary Buttons</h3>
+                    <div class="space-y-3">
+                        <button class="btn-modern-primary w-full">
+                            <i class="ri-heart-line mr-2"></i>
+                            Primary Button
+                        </button>
+                        <button class="btn-modern-primary w-full" disabled>
+                            <i class="ri-loader-4-line animate-spin mr-2"></i>
+                            Loading...
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card-modern p-6">
+                    <h3 class="text-lg font-semibold mb-4">Secondary Buttons</h3>
+                    <div class="space-y-3">
+                        <button class="btn-modern-secondary w-full">
+                            <i class="ri-download-line mr-2"></i>
+                            Secondary Button
+                        </button>
+                        <button class="btn-modern-outline w-full">
+                            <i class="ri-external-link-line mr-2"></i>
+                            Outline Button
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card-modern p-6">
+                    <h3 class="text-lg font-semibold mb-4">Badge Examples</h3>
+                    <div class="space-y-3">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="badge-modern badge-success">Success</span>
+                            <span class="badge-modern badge-warning">Warning</span>
+                            <span class="badge-modern badge-info">Info</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Input Fields Section -->
+        <section class="mb-12">
+            <h2 class="heading-secondary mb-6">Enhanced Input Fields</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card-modern p-6">
+                    <h3 class="text-lg font-semibold mb-4">Modern Inputs</h3>
+                    <div class="space-y-4">
+                        <input type="text" class="input-modern-enhanced" placeholder="Enter your name">
+                        <input type="email" class="input-modern-enhanced" placeholder="Enter your email">
+                        <div class="select-modern">
+                            <select>
+                                <option>Choose an option</option>
+                                <option>Option 1</option>
+                                <option>Option 2</option>
+                                <option>Option 3</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-modern p-6">
+                    <h3 class="text-lg font-semibold mb-4">Price Range Filter</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between text-sm text-gray-600 mb-2">
+                            <span>₹<span id="demoMinPrice">0</span></span>
+                            <span>₹<span id="demoMaxPrice">10000</span></span>
+                        </div>
+                        <div class="relative">
+                            <div class="price-slider-track"></div>
+                            <input type="range" class="price-slider" min="0" max="10000" value="0" step="100">
+                            <input type="range" class="price-slider" min="0" max="10000" value="10000" step="100">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button class="price-filter-btn">Under ₹1,000</button>
+                            <button class="price-filter-btn">₹1,000 - ₹3,000</button>
+                            <button class="price-filter-btn">₹3,000 - ₹5,000</button>
+                            <button class="price-filter-btn">Above ₹5,000</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cards Section -->
+        <section class="mb-12">
+            <h2 class="heading-secondary mb-6">Interactive Cards</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card-modern card-hover-effect p-6">
+                    <div class="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center mb-4">
+                        <i class="ri-rocket-line text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Fast Performance</h3>
+                    <p class="text-muted">Optimized for speed and efficiency with modern web technologies.</p>
+                </div>
+                
+                <div class="card-modern card-hover-effect p-6">
+                    <div class="w-12 h-12 gradient-secondary rounded-xl flex items-center justify-center mb-4">
+                        <i class="ri-shield-check-line text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Secure & Reliable</h3>
+                    <p class="text-muted">Built with security best practices and reliable infrastructure.</p>
+                </div>
+                
+                <div class="card-modern card-hover-effect p-6">
+                    <div class="w-12 h-12 gradient-success rounded-xl flex items-center justify-center mb-4">
+                        <i class="ri-smartphone-line text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Mobile First</h3>
+                    <p class="text-muted">Responsive design that works perfectly on all devices.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Links Section -->
+        <section class="mb-12">
+            <h2 class="heading-secondary mb-6">Modern Links</h2>
+            <div class="card-modern p-6">
+                <div class="space-y-4">
+                    <p>Here are some <a href="#" class="link-modern">modern styled links</a> that have smooth hover effects.</p>
+                    <p>You can also use <a href="#" class="link-modern">multiple links</a> in the same paragraph with <a href="#" class="link-modern">consistent styling</a>.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Back to Shop -->
+        <div class="text-center">
+            <a href="/shop" class="btn-modern-primary">
+                <i class="ri-arrow-left-line mr-2"></i>
+                Back to Shop
+            </a>
+        </div>
+    </div>
+</main>
+
+<%- include('./partials/footer') %>

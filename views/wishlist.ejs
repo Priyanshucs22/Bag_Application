@@ -198,7 +198,7 @@
                         </h3>
                         <div class="space-y-3">
                             <a href="/products/new-Collection"
-                                class="flex items-center px-4 py-3 rounded-xl glass hover:bg-white/50 transition-modern group bg-white/50">
+                                class="flex items-center px-4 py-3 rounded-xl glass hover:bg-white/50 transition-modern group">
                                 <i class="ri-star-line mr-3 text-yellow-500 group-hover:text-yellow-600"></i>
                                 <span class="font-medium text-gray-700 group-hover:text-gray-800">New Collection</span>
                             </a>
@@ -329,92 +329,106 @@
 
                 <!-- Main Content Area -->
                 <section class="flex-1 md:h-[calc(100vh-6rem)] md:overflow-y-auto md:pr-4 custom-scrollbar smooth-scroll">
-                    <% if(success.length>0) { %>
-                    <div class="fixed top-20 left-1/2 transform -translate-x-1/2 p-4 gradient-success text-white font-semibold rounded-2xl shadow-modern-lg z-50 glass"
-                        id="flash-message">
-                        <i class="ri-check-line mr-2"></i>
-                        <%= success %>
+            <!-- Flash Messages -->
+            <% if(success.length > 0) { %>
+            <div class="fixed top-20 left-1/2 transform -translate-x-1/2 p-4 gradient-success text-white font-semibold rounded-2xl shadow-modern-lg z-50 glass"
+                id="flash-message">
+                <i class="ri-check-line mr-2"></i>
+                <%= success %>
+            </div>
+            <% } %>
+
+            <% if(error.length > 0) { %>
+            <div class="fixed top-20 left-1/2 transform -translate-x-1/2 p-4 bg-red-500 text-white font-semibold rounded-2xl shadow-modern-lg z-50 glass"
+                id="flash-message">
+                <i class="ri-error-warning-line mr-2"></i>
+                <%= error %>
+            </div>
+            <% } %>
+
+            <!-- Page Header -->
+            <div class="mb-8">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-gradient-to-r from-red-400 to-pink-500 rounded-xl flex items-center justify-center mr-4 mt-4">
+                        <i class="ri-heart-fill text-white text-xl"></i>
                     </div>
-                    <% } %>
-
-                    <!-- Products Header -->
-                    <div class="mb-8">
-                        <div class="flex items-center mb-4">
-                            <div class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center mr-4 mt-2">
-                                <i class="ri-star-line text-white text-xl"></i>
-                            </div>
-                            <div>
-                                <h1 class="text-3xl font-bold text-gray-800 mt-4">New Collection</h1>
-                                <p class="text-gray-600">Discover our latest premium bags and accessories</p>
-                            </div>
-                        </div>
-                    </div>
-
-        <% if (products.length > 0) { %>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <% products.forEach(function(product){ %>
-            <div class="card-modern overflow-hidden group cursor-pointer card-hover-effect" data-price="<%= product.price %>">
-                <!-- Product Image -->
-                <div class="h-64 flex items-center justify-center relative overflow-hidden" style="background: <%= product.bgcolor %>;">
-                    <img class="h-48 object-contain transition-modern group-hover:scale-110"
-                         src="data:image/jpeg;base64,<%= product.image.toString('base64') %>"
-                         alt="<%= product.name %>" />
-
-                    <!-- Overlay on Hover -->
-                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-modern flex items-center justify-center">
-                        <a href="/addtocart/<%= product._id %>"
-                           class="btn-modern-primary transform translate-y-4 group-hover:translate-y-0 transition-modern">
-                            <i class="ri-shopping-cart-line mr-2"></i>
-                            Add to Cart
-                        </a>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800 mt-4">My Wishlist</h1>
+                        <p class="text-gray-600">Your favorite products saved for later</p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Product Info -->
-                <div class="p-6" style="background: <%= product.panelcolor %>; color: <%= product.textcolor %>;">
-                    <div class="flex justify-between items-start mb-3">
-                        <div class="flex-1">
-                            <h3 class="font-bold text-lg mb-1 line-clamp-2"><%= product.name %></h3>
-                            <div class="flex items-center space-x-2">
-                                <span class="text-2xl font-bold">₹<%= product.price %></span>
-                                <% if (product.discount && product.discount > 0) { %>
-                                <span class="text-sm line-through opacity-60">₹<%= product.price + product.discount %></span>
-                                <% } %>
+            <!-- Wishlist Content -->
+            <% if (products.length > 0) { %>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <% products.forEach(function(product){ %>
+                <div class="card-modern overflow-hidden group cursor-pointer card-hover-effect">
+                    <!-- Product Image -->
+                    <div class="h-64 flex items-center justify-center relative overflow-hidden" style="background: <%= product.bgcolor %>;">
+                        <img class="h-48 object-contain transition-modern group-hover:scale-110"
+                             src="data:image/jpeg;base64,<%= product.image.toString('base64') %>"
+                             alt="<%= product.name %>" />
+
+                        <!-- Overlay on Hover -->
+                        <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-modern flex items-center justify-center">
+                            <div class="flex gap-2">
+                                <a href="/addtocart/<%= product._id %>"
+                                   class="btn-modern-primary transform translate-y-4 group-hover:translate-y-0 transition-modern">
+                                    <i class="ri-shopping-cart-line mr-2"></i>
+                                    Add to Cart
+                                </a>
+                                <a href="/wishlist/remove/<%= product._id %>"
+                                   class="btn-modern-secondary transform translate-y-4 group-hover:translate-y-0 transition-modern"
+                                   style="background: #ef4444; border-color: #ef4444;">
+                                    <i class="ri-delete-bin-line mr-2"></i>
+                                    Remove
+                                </a>
                             </div>
                         </div>
-                        <div class="flex flex-col items-end space-y-2">
-                            <button onclick="toggleWishlist('<%= product._id %>')"
-                                    class="p-2 rounded-full hover:bg-white/20 transition-modern">
-                                <i class="ri-heart-line text-lg"></i>
-                            </button>
-                        </div>
                     </div>
 
-                    <% if (product.discount && product.discount > 0) { %>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium px-2 py-1 bg-green-500 text-white rounded-full">
-                            Save ₹<%= product.discount %>
-                        </span>
+                    <!-- Product Info -->
+                    <div class="p-6" style="background: <%= product.panelcolor %>; color: <%= product.textcolor %>;">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg mb-1 line-clamp-2"><%= product.name %></h3>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-2xl font-bold">₹<%= (product.price - product.discount).toLocaleString() %></span>
+                                    <% if (product.discount && product.discount > 0) { %>
+                                    <span class="text-sm line-through opacity-60">₹<%= product.price.toLocaleString() %></span>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end space-y-2">
+                                <button onclick="toggleWishlist('<%= product._id %>')"
+                                        class="p-2 rounded-full hover:bg-white/20 transition-modern">
+                                    <i class="ri-heart-fill text-lg text-red-500"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <% } %>
                 </div>
+                <% }) %>
             </div>
-            <% }) %>
-        </div>
-        <% } else { %>
-        <div class="flex flex-col items-center justify-center py-20">
-            <div class="w-32 h-32 gradient-primary rounded-full flex items-center justify-center mb-6 opacity-20">
-                <i class="ri-shopping-bag-line text-4xl text-white"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-800 mb-2">No Products Found</h3>
-            <p class="text-gray-600 text-center max-w-md">
-                We couldn't find any products matching your criteria. Try adjusting your filters or check back later for new arrivals.
-            </p>
-            <a href="/shop" class="btn-modern-primary mt-6 inline-block">
-                <i class="ri-refresh-line mr-2"></i>
-                Reset Filters
-            </a>
-        </div>
+            <% } else { %>
+            <div class="card-modern text-center py-20">
+                <div class="w-32 h-32 bg-gradient-to-r from-red-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                    <i class="ri-heart-line text-4xl text-red-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-3">Your Wishlist is Empty</h3>
+                <p class="text-gray-600 mb-8 max-w-md mx-auto">Start adding products you love to your wishlist. Click the heart icon on any product to save it here.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/shop" class="btn-modern-primary">
+                        <i class="ri-shopping-bag-line mr-2"></i>
+                        Browse Products
+                    </a>
+                    <a href="/products/new-Collection" class="btn-modern-secondary">
+                        <i class="ri-star-line mr-2"></i>
+                        New Collection
+                    </a>
+                </div>
+                    </div>
                     <% } %>
                 </section>
             </div>
@@ -423,6 +437,76 @@
 </div>
 
 <script>
+    // Flash message auto-hide
+    setTimeout(function () {
+        const messageElement = document.getElementById("flash-message");
+        if (messageElement) {
+            messageElement.style.transform = "translateX(-50%) translateY(-100%)";
+            messageElement.style.opacity = "0";
+            setTimeout(() => {
+                messageElement.style.display = "none";
+            }, 300);
+        }
+    }, 4000);
+
+    // Enhanced Wishlist functionality
+    async function toggleWishlist(productId) {
+        const heartIcon = event.target;
+        const isLiked = heartIcon.classList.contains('ri-heart-fill');
+        
+        try {
+            const response = await fetch(`/wishlist/toggle/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ action: isLiked ? 'remove' : 'add' })
+            });
+
+            if (response.ok) {
+                if (isLiked) {
+                    // Remove from wishlist - reload page to update
+                    window.location.reload();
+                } else {
+                    heartIcon.classList.remove('ri-heart-line');
+                    heartIcon.classList.add('ri-heart-fill', 'text-red-500');
+                    showToast('Added to wishlist ❤️', 'success');
+                }
+            } else {
+                showToast('Failed to update wishlist', 'error');
+            }
+        } catch (error) {
+            console.error('Wishlist error:', error);
+            showToast('Network error. Please try again.', 'error');
+        }
+    }
+
+    // Toast notification function
+    function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `fixed top-24 right-4 z-50 px-6 py-3 rounded-2xl text-white font-semibold shadow-lg transform translate-x-full transition-all duration-300 ${
+            type === 'success' ? 'bg-green-500' : 
+            type === 'error' ? 'bg-red-500' : 
+            'bg-blue-500'
+        }`;
+        toast.textContent = message;
+        
+        document.body.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+            toast.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Animate out and remove
+        setTimeout(() => {
+            toast.style.transform = 'translateX(full)';
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 300);
+        }, 3000);
+    }
+
     // Sidebar toggle with smooth animation
     document.getElementById("toggleSidebar").addEventListener("click", function () {
         const sidebar = document.getElementById("sidebar");
@@ -447,107 +531,6 @@
         }
     });
 
-    // Flash message auto-hide with animation
-    setTimeout(function () {
-        const messageElement = document.getElementById("flash-message");
-        if (messageElement) {
-            messageElement.style.transform = "translateX(-50%) translateY(-100%)";
-            messageElement.style.opacity = "0";
-            setTimeout(() => {
-                messageElement.style.display = "none";
-            }, 300);
-        }
-    }, 4000);
-
-    // Enhanced Wishlist functionality with automatic backend integration
-    async function toggleWishlist(productId) {
-        const heartIcon = event.target;
-        const isLiked = heartIcon.classList.contains('ri-heart-fill');
-
-        try {
-            // Optimistic UI update with animation
-            if (isLiked) {
-                heartIcon.classList.remove('ri-heart-fill', 'text-red-500');
-                heartIcon.classList.add('ri-heart-line');
-                showToast('Removed from wishlist', 'info');
-            } else {
-                heartIcon.classList.remove('ri-heart-line');
-                heartIcon.classList.add('ri-heart-fill', 'text-red-500');
-                showToast('Added to wishlist ❤️', 'success');
-
-                // Add satisfying heart animation
-                heartIcon.style.transform = 'scale(1.4)';
-                heartIcon.style.transition = 'transform 0.2s ease-out';
-                setTimeout(() => {
-                    heartIcon.style.transform = 'scale(1)';
-                }, 200);
-            }
-
-            // Make API call to backend
-            const response = await fetch(`/wishlist/toggle/${productId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ action: isLiked ? 'remove' : 'add' })
-            });
-
-            if (response.ok) {
-                // Update navbar wishlist count
-                if (window.loadWishlistCount) {
-                    window.loadWishlistCount();
-                }
-            } else {
-                // Revert UI changes if API call fails
-                if (isLiked) {
-                    heartIcon.classList.remove('ri-heart-line');
-                    heartIcon.classList.add('ri-heart-fill', 'text-red-500');
-                } else {
-                    heartIcon.classList.remove('ri-heart-fill', 'text-red-500');
-                    heartIcon.classList.add('ri-heart-line');
-                }
-                showToast('Failed to update wishlist', 'error');
-            }
-        } catch (error) {
-            console.error('Wishlist error:', error);
-            // Revert UI changes on error
-            if (isLiked) {
-                heartIcon.classList.remove('ri-heart-line');
-                heartIcon.classList.add('ri-heart-fill', 'text-red-500');
-            } else {
-                heartIcon.classList.remove('ri-heart-fill', 'text-red-500');
-                heartIcon.classList.add('ri-heart-line');
-            }
-            showToast('Network error. Please try again.', 'error');
-        }
-    }
-
-    // Toast notification function
-    function showToast(message, type = 'info') {
-        const toast = document.createElement('div');
-        toast.className = `fixed top-24 right-4 z-50 px-6 py-3 rounded-2xl text-white font-semibold shadow-lg transform translate-x-full transition-all duration-300 ${
-            type === 'success' ? 'bg-green-500' :
-            type === 'error' ? 'bg-red-500' :
-            'bg-blue-500'
-        }`;
-        toast.textContent = message;
-
-        document.body.appendChild(toast);
-
-        // Animate in
-        setTimeout(() => {
-            toast.style.transform = 'translateX(0)';
-        }, 100);
-
-        // Animate out and remove
-        setTimeout(() => {
-            toast.style.transform = 'translateX(full)';
-            setTimeout(() => {
-                document.body.removeChild(toast);
-            }, 300);
-        }, 3000);
-    }
-
     // Quick Sort Functionality
     window.quickSort = function(sortType) {
         // Update button states
@@ -560,83 +543,32 @@
             activeBtn.classList.add('active');
         }
 
-        // Create and submit form
-        const form = document.createElement('form');
-        form.method = 'GET';
-        form.action = '/sort';
+        // Sort products
+        const container = document.querySelector('.grid');
+        const products = Array.from(container.children);
 
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'sortby';
-        input.value = sortType;
+        products.sort((a, b) => {
+            const priceA = parseInt(a.getAttribute('data-price') || '0');
+            const priceB = parseInt(b.getAttribute('data-price') || '0');
 
-        form.appendChild(input);
-        document.body.appendChild(form);
-        form.submit();
-    };
-
-    // Set initial active state based on URL params
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentSort = urlParams.get('sortby') || 'newest';
-
-    document.querySelectorAll('.quick-sort-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-
-    const currentBtn = document.querySelector(`[data-sort="${currentSort}"]`);
-    if (currentBtn) {
-        currentBtn.classList.add('active');
-    }
-
-    // Load existing wishlist status for products
-    async function loadWishlistStatus() {
-        try {
-            const response = await fetch('/wishlist/status');
-            if (response.ok) {
-                const data = await response.json();
-                const likedProducts = data.likedProducts || [];
-
-                // Update heart icons for liked products
-                likedProducts.forEach(productId => {
-                    const heartIcon = document.querySelector(`button[onclick="toggleWishlist('${productId}')"] i`);
-                    if (heartIcon) {
-                        heartIcon.classList.remove('ri-heart-line');
-                        heartIcon.classList.add('ri-heart-fill', 'text-red-500');
-                    }
-                });
+            switch(sortType) {
+                case 'price-low':
+                    return priceA - priceB;
+                case 'price-high':
+                    return priceB - priceA;
+                case 'oldest':
+                    return 1; // Keep original order for oldest
+                case 'newest':
+                default:
+                    return -1; // Reverse order for newest
             }
-        } catch (error) {
-            console.error('Failed to load wishlist status:', error);
-        }
-    }
+        });
 
-    // Initialize sidebar state
-    function initializeSidebar() {
-        const sidebar = document.getElementById("sidebar");
-        const isDesktop = window.innerWidth >= 768;
+        // Re-append sorted products
+        products.forEach(product => container.appendChild(product));
 
-        if (isDesktop) {
-            // On desktop, show sidebar by default
-            sidebar.classList.remove("hidden");
-            sidebar.style.transform = "translateX(0)";
-            sidebar.style.opacity = "1";
-            sidebar.setAttribute('data-visible', 'true');
-        } else {
-            // On mobile, hide sidebar by default
-            sidebar.classList.add("hidden");
-            sidebar.style.transform = "translateX(-100%)";
-            sidebar.style.opacity = "0";
-            sidebar.setAttribute('data-visible', 'false');
-        }
-    }
-
-    // Initialize on load
-    initializeSidebar();
-    loadWishlistStatus();
-    initializePremiumSlider();
-
-    // Re-initialize on window resize
-    window.addEventListener('resize', initializeSidebar);
+        showToast(`Products sorted by ${sortType.replace('-', ' ')}`, 'info');
+    };
 
     // Premium Price filter functionality
     function setPriceRange(min, max) {
@@ -686,28 +618,56 @@
     }
 
     function clearPriceFilter() {
-        const minPriceSlider = document.getElementById('minPrice');
-        const maxPriceSlider = document.getElementById('maxPrice');
-        const minPriceInput = document.getElementById('minPriceInput');
-        const maxPriceInput = document.getElementById('maxPriceInput');
-
-        if (minPriceSlider) minPriceSlider.value = 0;
-        if (maxPriceSlider) maxPriceSlider.value = 10000;
-        if (minPriceInput) minPriceInput.value = 0;
-        if (maxPriceInput) maxPriceInput.value = 10000;
-
-        updatePremiumSlider();
+        document.getElementById('minPrice').value = 0;
+        document.getElementById('maxPrice').value = 10000;
+        document.getElementById('minPriceDisplay').textContent = 0;
+        document.getElementById('maxPriceDisplay').textContent = 10000;
+        updateSliderTrack();
 
         const products = document.querySelectorAll('.card-hover-effect');
         products.forEach(product => {
             product.style.display = 'block';
         });
 
-        document.querySelectorAll('.premium-price-filter-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-
         showToast('Price filter cleared', 'info');
+    }
+
+    function updateSliderTrack() {
+        const minSlider = document.getElementById('minPrice');
+        const maxSlider = document.getElementById('maxPrice');
+
+        if (minSlider && maxSlider) {
+            const min = parseInt(minSlider.value);
+            const max = parseInt(maxSlider.value);
+            const minPercent = (min / 10000) * 100;
+            const maxPercent = (max / 10000) * 100;
+
+            const track = document.querySelector('.price-slider-track');
+            if (track) {
+                track.style.left = minPercent + '%';
+                track.style.width = (maxPercent - minPercent) + '%';
+            }
+        }
+    }
+
+    // Initialize sidebar state
+    function initializeSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const isDesktop = window.innerWidth >= 768;
+
+        if (isDesktop) {
+            // On desktop, show sidebar by default
+            sidebar.classList.remove("hidden");
+            sidebar.style.transform = "translateX(0)";
+            sidebar.style.opacity = "1";
+            sidebar.setAttribute('data-visible', 'true');
+        } else {
+            // On mobile, hide sidebar by default
+            sidebar.classList.add("hidden");
+            sidebar.style.transform = "translateX(-100%)";
+            sidebar.style.opacity = "0";
+            sidebar.setAttribute('data-visible', 'false');
+        }
     }
 
     // Premium slider update function
@@ -796,57 +756,14 @@
         updatePremiumSlider();
     }
 
-    function updateSliderTrack() {
-        const minSlider = document.getElementById('minPrice');
-        const maxSlider = document.getElementById('maxPrice');
-
-        if (minSlider && maxSlider) {
-            const min = parseInt(minSlider.value);
-            const max = parseInt(maxSlider.value);
-            const minPercent = (min / 10000) * 100;
-            const maxPercent = (max / 10000) * 100;
-
-            const track = document.querySelector('.price-slider-track');
-            if (track) {
-                track.style.left = minPercent + '%';
-                track.style.width = (maxPercent - minPercent) + '%';
-            }
-        }
-    }
-
-    // Initialize price sliders
+    // Initialize everything
     document.addEventListener('DOMContentLoaded', function() {
-        const minSlider = document.getElementById('minPrice');
-        const maxSlider = document.getElementById('maxPrice');
-
-        if (minSlider && maxSlider) {
-            minSlider.addEventListener('input', function() {
-                const min = parseInt(this.value);
-                const max = parseInt(maxSlider.value);
-
-                if (min >= max) {
-                    this.value = max - 100;
-                }
-
-                document.getElementById('minPriceDisplay').textContent = this.value;
-                updateSliderTrack();
-            });
-
-            maxSlider.addEventListener('input', function() {
-                const min = parseInt(minSlider.value);
-                const max = parseInt(this.value);
-
-                if (max <= min) {
-                    this.value = min + 100;
-                }
-
-                document.getElementById('maxPriceDisplay').textContent = this.value;
-                updateSliderTrack();
-            });
-
-            updateSliderTrack();
-        }
+        initializeSidebar();
+        initializePremiumSlider();
     });
+
+    // Re-initialize on window resize
+    window.addEventListener('resize', initializeSidebar);
 
     // Enhanced Add to cart with loading state and cart count update
     document.querySelectorAll('a[href*="/addtocart/"]').forEach(link => {

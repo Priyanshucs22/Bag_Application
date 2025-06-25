@@ -1,82 +1,929 @@
 <%- include('./partials/header') %>
 
-<main class="w-full pt-20 px-4 md:px-10 flex flex-col md:flex-row gap-6 bg-gray-100 font-sans h-screen overflow-hidden">
-    <!-- Sidebar Toggle Button (Visible Only on Small Screens) -->
-    <button id="toggleSidebar" class="md:hidden bg-gray-900 text-white px-4 py-2 rounded-md mb-3">
-        ☰ Menu
-    </button>
+<style>
+    /* Premium Price Range Slider Styles */
+    .premium-slider-container {
+        position: relative;
+        height: 40px;
+        margin: 20px 0;
+    }
 
-    <!-- Sidebar -->
-    <aside id="sidebar"
-        class="w-full sm:w-64 bg-gray-900 text-white p-6 rounded-lg shadow-md flex flex-col flex-shrink-0 h-auto md:h-full md:block hidden">
-        <h3 class="text-xl font-semibold mb-4">Sort by</h3>
-        <form action="/sort" class="mb-6">
-            <select class="border rounded-md px-3 py-2 w-full bg-gray-800 text-white outline-none focus:ring-2 focus:ring-blue-500"
-                name="sortby">
-                <option value="newest">Newest</option>
-                <option value="oldest">Oldest</option>
-            </select>
-            <button type="submit"
-                class="mt-3 bg-blue-500 text-white px-3 py-2 w-full rounded-md hover:bg-blue-400 transition">
-                Sort
-            </button>
-        </form>
-        <h3 class="text-xl font-semibold mb-3">Categories</h3>
-        <div class="flex flex-col gap-3">
-            <a href="/products/new-Collection"
-                class="block px-4 py-2 rounded-md bg-gray-800 text-white hover:bg-gray-700 transition">New Collection</a>
-            <a href="/products/all"
-                class="block px-4 py-2 rounded-md bg-gray-800 text-white hover:bg-gray-700 transition">All Products</a>
+    .premium-slider-track-bg {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #e5e7eb 0%, #d1d5db 100%);
+        border-radius: 3px;
+        transform: translateY(-50%);
+    }
+
+    .premium-slider-track-active {
+        position: absolute;
+        top: 50%;
+        height: 6px;
+        background: linear-gradient(90deg, #8b5cf6 0%, #3b82f6 100%);
+        border-radius: 3px;
+        transform: translateY(-50%);
+        transition: all 0.3s ease;
+    }
+
+    .premium-slider {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 40px;
+        background: transparent;
+        pointer-events: none;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    .premium-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: transparent;
+        cursor: pointer;
+        pointer-events: auto;
+    }
+
+    .premium-slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: transparent;
+        cursor: pointer;
+        pointer-events: auto;
+        border: none;
+    }
+
+    .premium-slider-thumb {
+        position: absolute;
+        top: 50%;
+        width: 20px;
+        height: 20px;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
+
+    .premium-slider-thumb-inner {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        border: 3px solid white;
+        transition: all 0.3s ease;
+    }
+
+    .premium-slider-thumb:hover .premium-slider-thumb-inner {
+        transform: scale(1.2);
+        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+    }
+
+    .premium-price-filter-btn {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-align: left;
+    }
+
+    .premium-price-filter-btn:hover {
+        background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+        border-color: #94a3b8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .premium-price-filter-btn.active {
+        background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+        border-color: #8b5cf6;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
+    }
+
+    .premium-price-filter-btn i {
+        font-size: 18px;
+        margin-right: 8px;
+    }
+</style>
+
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div class="pt-20">
+        <div class="w-full">
+            <div class="flex flex-col md:flex-row gap-6 px-4 md:px-6">
+                <!-- Sidebar Toggle Button (Visible Only on Small Screens) -->
+                <button id="toggleSidebar" class="md:hidden glass px-6 py-3 rounded-2xl mb-4 font-medium transition-modern hover:bg-white/20">
+                    <i class="ri-filter-line mr-2"></i>
+                    Filters & Sort
+                </button>
+
+                <!-- Left Sidebar -->
+                <aside id="sidebar" class="w-full md:w-80 card-modern p-6 flex flex-col flex-shrink-0 md:sticky md:top-24 md:block hidden md:h-[calc(100vh-6rem)] md:overflow-y-auto custom-scrollbar transition-all duration-300 ease-in-out transform"
+                       style="transform: translateX(-100%); opacity: 0;"
+                       data-visible="false">
+                    <!-- Sort Section -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                            <div class="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center mr-3">
+                                <i class="ri-sort-desc text-white text-lg"></i>
+                            </div>
+                            Sort Products
+                        </h3>
+
+            <!-- Quick Sort Buttons -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <button onclick="quickSort('newest')" class="quick-sort-btn newest-btn active" data-sort="newest">
+                    <div class="flex items-center justify-center">
+                        <i class="ri-star-line mr-2 text-lg"></i>
+                        <div>
+                            <div class="font-semibold">Newest</div>
+                            <div class="text-xs opacity-80">Latest arrivals</div>
+                        </div>
+                    </div>
+                </button>
+                <button onclick="quickSort('price-low')" class="quick-sort-btn" data-sort="price-low">
+                    <div class="flex items-center justify-center">
+                        <i class="ri-money-dollar-circle-line mr-2 text-lg"></i>
+                        <div>
+                            <div class="font-semibold">Price</div>
+                            <div class="text-xs opacity-80">Low to High</div>
+                        </div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Advanced Sort Dropdown -->
+            <details class="group">
+                <summary class="cursor-pointer list-none">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                        <span class="text-sm font-medium text-gray-700">More Sort Options</span>
+                        <i class="ri-arrow-down-s-line text-gray-500 group-open:rotate-180 transition-transform"></i>
+                    </div>
+                </summary>
+                <div class="mt-3 space-y-2">
+                    <form action="/sort" class="space-y-4">
+                        <div class="select-modern">
+                            <select class="text-gray-700 cursor-pointer" name="sortby">
+                                <option value="newest">✨ Newest First</option>
+                                <option value="oldest">🕐 Oldest First</option>
+                                <option value="price-low">💰 Price: Low to High</option>
+                                <option value="price-high">💎 Price: High to Low</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-modern-primary w-full">
+                            <i class="ri-check-line mr-2"></i>
+                            Apply Sort
+                        </button>
+                    </form>
+                </div>
+            </details>
         </div>
-    </aside>
 
-    <!-- Product Section -->
-    <section class="flex-1 overflow-y-auto h-full pr-2">
+        <!-- Categories Section -->
+        <div class="mb-8">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ri-grid-line mr-2 text-purple-600"></i>
+                Categories
+            </h3>
+            <div class="space-y-3">
+                <a href="/products/new-Collection"
+                    class="flex items-center px-4 py-3 rounded-xl glass hover:bg-white/50 transition-modern group">
+                    <i class="ri-star-line mr-3 text-yellow-500 group-hover:text-yellow-600"></i>
+                    <span class="font-medium text-gray-700 group-hover:text-gray-800">New Collection</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Price Range Filter -->
+        <div class="mb-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ri-money-dollar-circle-line mr-2 text-purple-600"></i>
+                Price Range
+            </h3>
+            <div class="glass p-6 rounded-xl">
+                <!-- Premium Price Range Slider -->
+                <div class="mb-6">
+                    <!-- Price Display -->
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="bg-gradient-to-r from-purple-100 to-blue-100 px-4 py-2 rounded-xl">
+                            <span class="text-sm font-medium text-gray-700">Min</span>
+                            <div class="text-lg font-bold text-purple-600">₹<span id="minPriceDisplay">0</span></div>
+                        </div>
+                        <div class="flex-1 mx-4 h-px bg-gradient-to-r from-purple-200 to-blue-200"></div>
+                        <div class="bg-gradient-to-r from-blue-100 to-purple-100 px-4 py-2 rounded-xl">
+                            <span class="text-sm font-medium text-gray-700">Max</span>
+                            <div class="text-lg font-bold text-blue-600">₹<span id="maxPriceDisplay">10000</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Premium Dual Range Slider -->
+                    <div class="relative mb-6">
+                        <div class="premium-slider-container">
+                            <!-- Background Track -->
+                            <div class="premium-slider-track-bg"></div>
+                            <!-- Active Track -->
+                            <div class="premium-slider-track-active" id="sliderTrack"></div>
+                            <!-- Min Range Input -->
+                            <input type="range" id="minPrice" class="premium-slider premium-slider-min"
+                                   min="0" max="10000" value="0" step="100">
+                            <!-- Max Range Input -->
+                            <input type="range" id="maxPrice" class="premium-slider premium-slider-max"
+                                   min="0" max="10000" value="10000" step="100">
+                            <!-- Min Thumb -->
+                            <div class="premium-slider-thumb premium-slider-thumb-min" id="minThumb">
+                                <div class="premium-slider-thumb-inner"></div>
+                            </div>
+                            <!-- Max Thumb -->
+                            <div class="premium-slider-thumb premium-slider-thumb-max" id="maxThumb">
+                                <div class="premium-slider-thumb-inner"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Price Input Fields -->
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="relative">
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Minimum Price</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">₹</span>
+                                <input type="number" id="minPriceInput"
+                                       class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300"
+                                       placeholder="0" min="0" max="10000">
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Maximum Price</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">₹</span>
+                                <input type="number" id="maxPriceInput"
+                                       class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+                                       placeholder="10000" min="0" max="10000">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Price Filters -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                        <i class="ri-flashlight-line mr-2 text-yellow-500"></i>
+                        Quick Filters
+                    </h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="setPriceRange(0, 1000)" class="premium-price-filter-btn" data-range="0-1000">
+                            <i class="ri-money-dollar-circle-line mr-2"></i>
+                            <div>
+                                <div class="font-semibold">Under ₹1K</div>
+                                <div class="text-xs opacity-75">Budget friendly</div>
+                            </div>
+                        </button>
+                        <button onclick="setPriceRange(1000, 3000)" class="premium-price-filter-btn" data-range="1000-3000">
+                            <i class="ri-coin-line mr-2"></i>
+                            <div>
+                                <div class="font-semibold">₹1K - ₹3K</div>
+                                <div class="text-xs opacity-75">Mid range</div>
+                            </div>
+                        </button>
+                        <button onclick="setPriceRange(3000, 5000)" class="premium-price-filter-btn" data-range="3000-5000">
+                            <i class="ri-vip-crown-line mr-2"></i>
+                            <div>
+                                <div class="font-semibold">₹3K - ₹5K</div>
+                                <div class="text-xs opacity-75">Premium</div>
+                            </div>
+                        </button>
+                        <button onclick="setPriceRange(5000, 10000)" class="premium-price-filter-btn" data-range="5000-10000">
+                            <i class="ri-vip-diamond-line mr-2"></i>
+                            <div>
+                                <div class="font-semibold">Above ₹5K</div>
+                                <div class="text-xs opacity-75">Luxury</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-3">
+                    <button onclick="applyPriceFilter()" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4 rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center">
+                        <i class="ri-filter-line mr-2"></i>
+                        Apply Price Filter
+                    </button>
+                    <button onclick="clearPriceFilter()" class="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-all duration-300 font-medium flex items-center justify-center">
+                        <i class="ri-refresh-line mr-2"></i>
+                        Reset Filter
+                    </button>
+                </div>
+            </div>
+                </aside>
+
+                <!-- Main Content Area -->
+                <section class="flex-1 md:h-[calc(100vh-6rem)] md:overflow-y-auto md:pr-4 custom-scrollbar smooth-scroll">
         <% if(success.length>0) { %>
-        <div class="fixed top-5 left-1/2 transform -translate-x-1/2 p-3 bg-blue-500 text-white font-semibold rounded-md shadow-lg z-50"
+        <div class="fixed top-20 left-1/2 transform -translate-x-1/2 p-4 gradient-success text-white font-semibold rounded-2xl shadow-modern-lg z-50 glass"
             id="flash-message">
+            <i class="ri-check-line mr-2"></i>
             <%= success %>
         </div>
         <% } %>
 
-        <% if (products.length > 0) { %>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <% products.forEach(function(product){ %>
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                <div class="h-52 flex items-center justify-center bg-[<%= product.bgcolor %>]">
-                    <img class="h-40 object-contain" src="data:image/jpeg;base64,<%= product.image.toString('base64') %>"
-                        alt="Product" />
-                </div>
-                <div class="p-4 bg-[<%= product.panelcolor %>] text-[<%= product.textcolor %>] flex justify-between items-center">
-                    <div>
-                        <h3 class="font-semibold"><%= product.name %></h3>
-                        <h4 class="text-lg font-medium">₹ <%= product.price %></h4>
+                    <!-- Products Header -->
+                    <div class="mb-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center mr-4 mt-2">
+                                <i class="ri-shopping-bag-3-line text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-3xl font-bold text-gray-800 mt-4">Discover Our Collection</h1>
+                                <p class="text-gray-600">Premium bags crafted with excellence</p>
+                            </div>
+                        </div>
                     </div>
-                    <a href="/addtocart/<%= product._id %>" class="text-red-500 hover:underline">Add</a>
+
+                    <% if (products.length > 0) { %>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <% products.forEach(function(product){ %>
+                        <div class="card-modern overflow-hidden group cursor-pointer card-hover-effect" data-price="<%= product.price %>">
+                            <!-- Product Image -->
+                            <div class="h-64 flex items-center justify-center relative overflow-hidden" style="background: <%= product.bgcolor %>;">
+                                <img class="h-48 object-contain transition-modern group-hover:scale-110"
+                                     src="data:image/jpeg;base64,<%= product.image.toString('base64') %>"
+                                     alt="<%= product.name %>" />
+
+                    <!-- Overlay on Hover -->
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-modern flex items-center justify-center">
+                        <a href="/addtocart/<%= product._id %>"
+                           class="btn-modern-primary transform translate-y-4 group-hover:translate-y-0 transition-modern">
+                            <i class="ri-shopping-cart-line mr-2"></i>
+                            Add to Cart
+                        </a>
+                    </div>
+                </div>
+
+                            <!-- Product Info -->
+                            <div class="p-6" style="background: <%= product.panelcolor %>; color: <%= product.textcolor %>;">
+                                <div class="flex justify-between items-start mb-3">
+                                    <div class="flex-1">
+                                        <h3 class="font-bold text-lg mb-1 line-clamp-2"><%= product.name %></h3>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-2xl font-bold">₹<%= product.price %></span>
+                                <% if (product.discount && product.discount > 0) { %>
+                                <span class="text-sm line-through opacity-60">₹<%= product.price + product.discount %></span>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end space-y-2">
+                            <button onclick="toggleWishlist('<%= product._id %>')"
+                                    class="p-2 rounded-full hover:bg-white/20 transition-modern">
+                                <i class="ri-heart-line text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <% if (product.discount && product.discount > 0) { %>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium px-2 py-1 bg-green-500 text-white rounded-full">
+                            Save ₹<%= product.discount %>
+                        </span>
+                    </div>
+                    <% } %>
                 </div>
             </div>
-            <% }) %>
+                        <% }) %>
+                    </div>
+                    <% } else { %>
+                    <div class="flex flex-col items-center justify-center py-20">
+                        <div class="w-32 h-32 gradient-primary rounded-full flex items-center justify-center mb-6 opacity-20">
+                            <i class="ri-shopping-bag-line text-4xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">No Products Found</h3>
+                        <p class="text-gray-600 text-center max-w-md">
+                            We couldn't find any products matching your criteria. Try adjusting your filters or check back later for new arrivals.
+                        </p>
+                        <a href="/shop" class="btn-modern-primary mt-6 inline-block">
+                            <i class="ri-refresh-line mr-2"></i>
+                            Reset Filters
+                        </a>
+                    </div>
+                    <% } %>
+                </section>
+            </div>
         </div>
-        <% } else { %>
-        <div class="w-full h-full flex items-center justify-center">
-            <p class="text-2xl text-gray-600">No products found.</p>
-        </div>
-        <% } %>
-    </section>
-</main>
+    </div>
+</div>
 
 <script>
+    // Sidebar toggle with smooth animation
     document.getElementById("toggleSidebar").addEventListener("click", function () {
         const sidebar = document.getElementById("sidebar");
-        sidebar.classList.toggle("hidden");
+        const isVisible = sidebar.getAttribute('data-visible') === 'true';
+
+        if (isVisible) {
+            // Hide sidebar
+            sidebar.style.transform = "translateX(-100%)";
+            sidebar.style.opacity = "0";
+            setTimeout(() => {
+                sidebar.classList.add("hidden");
+                sidebar.setAttribute('data-visible', 'false');
+            }, 300);
+        } else {
+            // Show sidebar
+            sidebar.classList.remove("hidden");
+            sidebar.setAttribute('data-visible', 'true');
+            // Force reflow
+            sidebar.offsetHeight;
+            sidebar.style.transform = "translateX(0)";
+            sidebar.style.opacity = "1";
+        }
     });
 
+    // Flash message auto-hide with animation
     setTimeout(function () {
         const messageElement = document.getElementById("flash-message");
         if (messageElement) {
-            messageElement.style.display = "none";
+            messageElement.style.transform = "translateX(-50%) translateY(-100%)";
+            messageElement.style.opacity = "0";
+            setTimeout(() => {
+                messageElement.style.display = "none";
+            }, 300);
         }
-    }, 3000);
+    }, 4000);
+
+    // Enhanced Wishlist functionality with automatic backend integration
+    async function toggleWishlist(productId) {
+        const heartIcon = event.target;
+        const isLiked = heartIcon.classList.contains('ri-heart-fill');
+
+        try {
+            // Optimistic UI update with animation
+            if (isLiked) {
+                heartIcon.classList.remove('ri-heart-fill', 'text-red-500');
+                heartIcon.classList.add('ri-heart-line');
+                showToast('Removed from wishlist', 'info');
+            } else {
+                heartIcon.classList.remove('ri-heart-line');
+                heartIcon.classList.add('ri-heart-fill', 'text-red-500');
+                showToast('Added to wishlist ❤️', 'success');
+
+                // Add satisfying heart animation
+                heartIcon.style.transform = 'scale(1.4)';
+                heartIcon.style.transition = 'transform 0.2s ease-out';
+                setTimeout(() => {
+                    heartIcon.style.transform = 'scale(1)';
+                }, 200);
+            }
+
+            // Make API call to backend
+            const response = await fetch(`/wishlist/toggle/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ action: isLiked ? 'remove' : 'add' })
+            });
+
+            if (response.ok) {
+                // Update navbar wishlist count
+                if (window.loadWishlistCount) {
+                    window.loadWishlistCount();
+                }
+            } else {
+                // Revert UI changes if API call fails
+                if (isLiked) {
+                    heartIcon.classList.remove('ri-heart-line');
+                    heartIcon.classList.add('ri-heart-fill', 'text-red-500');
+                } else {
+                    heartIcon.classList.remove('ri-heart-fill', 'text-red-500');
+                    heartIcon.classList.add('ri-heart-line');
+                }
+                showToast('Failed to update wishlist', 'error');
+            }
+        } catch (error) {
+            console.error('Wishlist error:', error);
+            // Revert UI changes on error
+            if (isLiked) {
+                heartIcon.classList.remove('ri-heart-line');
+                heartIcon.classList.add('ri-heart-fill', 'text-red-500');
+            } else {
+                heartIcon.classList.remove('ri-heart-fill', 'text-red-500');
+                heartIcon.classList.add('ri-heart-line');
+            }
+            showToast('Network error. Please try again.', 'error');
+        }
+    }
+
+    // Toast notification function
+    function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `fixed top-24 right-4 z-50 px-6 py-3 rounded-2xl text-white font-semibold shadow-lg transform translate-x-full transition-all duration-300 ${
+            type === 'success' ? 'bg-green-500' :
+            type === 'error' ? 'bg-red-500' :
+            'bg-blue-500'
+        }`;
+        toast.textContent = message;
+
+        document.body.appendChild(toast);
+
+        // Animate in
+        setTimeout(() => {
+            toast.style.transform = 'translateX(0)';
+        }, 100);
+
+        // Animate out and remove
+        setTimeout(() => {
+            toast.style.transform = 'translateX(full)';
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 300);
+        }, 3000);
+    }
+
+    // Load existing wishlist status for products
+    async function loadWishlistStatus() {
+        try {
+            const response = await fetch('/wishlist/status');
+            if (response.ok) {
+                const data = await response.json();
+                const likedProducts = data.likedProducts || [];
+
+                // Update heart icons for liked products
+                likedProducts.forEach(productId => {
+                    const heartIcon = document.querySelector(`button[onclick="toggleWishlist('${productId}')"] i`);
+                    if (heartIcon) {
+                        heartIcon.classList.remove('ri-heart-line');
+                        heartIcon.classList.add('ri-heart-fill', 'text-red-500');
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Failed to load wishlist status:', error);
+        }
+    }
+
+    // Load wishlist status on page load
+    document.addEventListener('DOMContentLoaded', loadWishlistStatus);
+
+    // Enhanced Add to cart with loading state and cart count update
+    document.querySelectorAll('a[href*="/addtocart/"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent default navigation
+
+            const btn = this;
+            const originalText = btn.innerHTML;
+            const productId = btn.href.split('/').pop();
+
+            btn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Adding...';
+            btn.style.pointerEvents = 'none';
+
+            // Make AJAX request to add to cart
+            fetch(btn.href)
+                .then(response => {
+                    if (response.ok) {
+                        // Update cart count in navbar
+                        if (window.loadCartCount) {
+                            window.loadCartCount();
+                        }
+
+                        // Show success message
+                        showToast('Product added to cart! 🛒', 'success');
+
+                        // Change button text temporarily
+                        btn.innerHTML = '<i class="ri-check-line mr-2"></i>Added!';
+                        btn.classList.add('bg-green-500', 'hover:bg-green-600');
+                        btn.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-purple-600', 'hover:from-blue-700', 'hover:to-purple-700');
+
+                        setTimeout(() => {
+                            btn.innerHTML = originalText;
+                            btn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                            btn.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-purple-600', 'hover:from-blue-700', 'hover:to-purple-700');
+                            btn.style.pointerEvents = 'auto';
+                        }, 2000);
+                    } else {
+                        throw new Error('Failed to add to cart');
+                    }
+                })
+                .catch(error => {
+                    console.error('Add to cart error:', error);
+                    showToast('Failed to add to cart. Please try again.', 'error');
+                    btn.innerHTML = originalText;
+                    btn.style.pointerEvents = 'auto';
+                });
+        });
+    });
+
+    // Smooth scroll for better UX
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Add loading skeleton for images
+    document.querySelectorAll('img').forEach(img => {
+        img.addEventListener('load', function() {
+            this.style.opacity = '1';
+        });
+
+        img.style.opacity = '0';
+        img.style.transition = 'opacity 0.3s ease';
+    });
+
+    // Price Range Functionality
+    const minPriceSlider = document.getElementById('minPrice');
+    const maxPriceSlider = document.getElementById('maxPrice');
+    const minPriceDisplay = document.getElementById('minPriceDisplay');
+    const maxPriceDisplay = document.getElementById('maxPriceDisplay');
+    const priceTrack = document.querySelector('.price-slider-track');
+
+    let currentMinPrice = 0;
+    let currentMaxPrice = 10000;
+
+    function updatePriceDisplay() {
+        if (minPriceDisplay) minPriceDisplay.textContent = currentMinPrice;
+        if (maxPriceDisplay) maxPriceDisplay.textContent = currentMaxPrice;
+
+        // Update track gradient
+        const minPercent = (currentMinPrice / 10000) * 100;
+        const maxPercent = (currentMaxPrice / 10000) * 100;
+
+        if (priceTrack) {
+            priceTrack.style.background = `linear-gradient(to right, #E5E7EB ${minPercent}%, #667eea ${minPercent}%, #667eea ${maxPercent}%, #E5E7EB ${maxPercent}%)`;
+        }
+    }
+
+    if (minPriceSlider && maxPriceSlider) {
+        minPriceSlider.addEventListener('input', function() {
+            currentMinPrice = parseInt(this.value);
+            if (currentMinPrice >= currentMaxPrice) {
+                currentMinPrice = currentMaxPrice - 100;
+                this.value = currentMinPrice;
+            }
+            updatePriceDisplay();
+        });
+
+        maxPriceSlider.addEventListener('input', function() {
+            currentMaxPrice = parseInt(this.value);
+            if (currentMaxPrice <= currentMinPrice) {
+                currentMaxPrice = currentMinPrice + 100;
+                this.value = currentMaxPrice;
+            }
+            updatePriceDisplay();
+        });
+    }
+
+    // Price filter functions
+    window.setPriceRange = function(min, max) {
+        currentMinPrice = min;
+        currentMaxPrice = max;
+
+        const minPriceSlider = document.getElementById('minPrice');
+        const maxPriceSlider = document.getElementById('maxPrice');
+        const minPriceInput = document.getElementById('minPriceInput');
+        const maxPriceInput = document.getElementById('maxPriceInput');
+
+        if (minPriceSlider) minPriceSlider.value = min;
+        if (maxPriceSlider) maxPriceSlider.value = max;
+        if (minPriceInput) minPriceInput.value = min;
+        if (maxPriceInput) maxPriceInput.value = max;
+
+        updatePremiumSlider();
+
+        // Update button states
+        document.querySelectorAll('.premium-price-filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Find and activate the correct button
+        const targetRange = `${min}-${max}`;
+        const targetBtn = document.querySelector(`[data-range="${targetRange}"]`);
+        if (targetBtn) {
+            targetBtn.classList.add('active');
+        }
+    };
+
+    window.applyPriceFilter = function() {
+        const productCards = document.querySelectorAll('.card-modern');
+        let visibleCount = 0;
+
+        productCards.forEach(card => {
+            // Get price from the product card
+            const priceElement = card.querySelector('span[class*="text-2xl"]');
+            if (priceElement) {
+                const priceText = priceElement.textContent;
+                const price = parseInt(priceText.replace(/[^\d]/g, ''));
+
+                if (price >= currentMinPrice && price <= currentMaxPrice) {
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeIn 0.3s ease';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            }
+        });
+
+        // Show notification
+        if (visibleCount === 0) {
+            showNotification(`No products found in price range ₹${currentMinPrice.toLocaleString()} - ₹${currentMaxPrice.toLocaleString()}. Try adjusting your filter.`, 'warning');
+        } else {
+            showNotification(`Found ${visibleCount} product${visibleCount > 1 ? 's' : ''} in price range ₹${currentMinPrice.toLocaleString()} - ₹${currentMaxPrice.toLocaleString()}`, 'success');
+        }
+    };
+
+    window.clearPriceFilter = function() {
+        currentMinPrice = 0;
+        currentMaxPrice = 10000;
+
+        if (minPriceSlider) minPriceSlider.value = 0;
+        if (maxPriceSlider) maxPriceSlider.value = 10000;
+
+        updatePriceDisplay();
+
+        const productCards = document.querySelectorAll('.card-modern');
+        productCards.forEach(card => {
+            card.style.display = 'block';
+        });
+
+        document.querySelectorAll('.premium-price-filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        updatePremiumSlider();
+        showNotification('Price filter cleared. Showing all products.', 'info');
+    };
+
+    // Premium slider update function
+    function updatePremiumSlider() {
+        const minSlider = document.getElementById('minPrice');
+        const maxSlider = document.getElementById('maxPrice');
+        const minDisplay = document.getElementById('minPriceDisplay');
+        const maxDisplay = document.getElementById('maxPriceDisplay');
+        const sliderTrack = document.getElementById('sliderTrack');
+        const minThumb = document.getElementById('minThumb');
+        const maxThumb = document.getElementById('maxThumb');
+
+        if (!minSlider || !maxSlider) return;
+
+        const min = parseInt(minSlider.value);
+        const max = parseInt(maxSlider.value);
+        const minPercent = (min / 10000) * 100;
+        const maxPercent = (max / 10000) * 100;
+
+        // Update displays
+        if (minDisplay) minDisplay.textContent = min.toLocaleString();
+        if (maxDisplay) maxDisplay.textContent = max.toLocaleString();
+
+        // Update track
+        if (sliderTrack) {
+            sliderTrack.style.left = minPercent + '%';
+            sliderTrack.style.width = (maxPercent - minPercent) + '%';
+        }
+
+        // Update thumbs
+        if (minThumb) {
+            minThumb.style.left = minPercent + '%';
+        }
+        if (maxThumb) {
+            maxThumb.style.left = maxPercent + '%';
+        }
+    }
+
+    // Initialize premium slider
+    function initializePremiumSlider() {
+        const minSlider = document.getElementById('minPrice');
+        const maxSlider = document.getElementById('maxPrice');
+        const minInput = document.getElementById('minPriceInput');
+        const maxInput = document.getElementById('maxPriceInput');
+
+        if (minSlider && maxSlider) {
+            minSlider.addEventListener('input', function() {
+                const min = parseInt(this.value);
+                const max = parseInt(maxSlider.value);
+
+                if (min >= max) {
+                    this.value = max - 100;
+                }
+
+                if (minInput) minInput.value = this.value;
+                updatePremiumSlider();
+            });
+
+            maxSlider.addEventListener('input', function() {
+                const min = parseInt(minSlider.value);
+                const max = parseInt(this.value);
+
+                if (max <= min) {
+                    this.value = min + 100;
+                }
+
+                if (maxInput) maxInput.value = this.value;
+                updatePremiumSlider();
+            });
+        }
+
+        if (minInput && maxInput) {
+            minInput.addEventListener('input', function() {
+                const value = parseInt(this.value) || 0;
+                if (minSlider) minSlider.value = Math.max(0, Math.min(value, 10000));
+                updatePremiumSlider();
+            });
+
+            maxInput.addEventListener('input', function() {
+                const value = parseInt(this.value) || 10000;
+                if (maxSlider) maxSlider.value = Math.max(0, Math.min(value, 10000));
+                updatePremiumSlider();
+            });
+        }
+
+        updatePremiumSlider();
+    }
+
+    // Initialize price display
+    updatePriceDisplay();
+
+    // Quick Sort Functionality
+    window.quickSort = function(sortType) {
+        // Update button states
+        document.querySelectorAll('.quick-sort-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        const activeBtn = document.querySelector(`[data-sort="${sortType}"]`);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
+
+        // Create and submit form
+        const form = document.createElement('form');
+        form.method = 'GET';
+        form.action = '/sort';
+
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'sortby';
+        input.value = sortType;
+
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    };
+
+    // Set initial active state based on URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentSort = urlParams.get('sortby') || 'newest';
+
+    document.querySelectorAll('.quick-sort-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    const currentBtn = document.querySelector(`[data-sort="${currentSort}"]`);
+    if (currentBtn) {
+        currentBtn.classList.add('active');
+    }
+
+    // Initialize sidebar state
+    function initializeSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const isDesktop = window.innerWidth >= 768;
+
+        if (isDesktop) {
+            // On desktop, show sidebar by default
+            sidebar.classList.remove("hidden");
+            sidebar.style.transform = "translateX(0)";
+            sidebar.style.opacity = "1";
+            sidebar.setAttribute('data-visible', 'true');
+        } else {
+            // On mobile, hide sidebar by default
+            sidebar.classList.add("hidden");
+            sidebar.style.transform = "translateX(-100%)";
+            sidebar.style.opacity = "0";
+            sidebar.setAttribute('data-visible', 'false');
+        }
+    }
+
+    // Initialize on load
+    initializeSidebar();
+    loadWishlistStatus();
+    initializePremiumSlider();
+
+    // Re-initialize on window resize
+    window.addEventListener('resize', initializeSidebar);
 </script>
 
 <%- include('./partials/footer') %>

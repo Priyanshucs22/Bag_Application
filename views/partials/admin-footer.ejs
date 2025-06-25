@@ -1,0 +1,70 @@
+        </main>
+    </div>
+
+    <script>
+        // Flash message auto-hide
+        setTimeout(function () {
+            const messageElement = document.querySelector('.flash-message');
+            if (messageElement) {
+                messageElement.style.transform = "translateY(-100%)";
+                messageElement.style.opacity = "0";
+                setTimeout(() => {
+                    messageElement.style.display = "none";
+                }, 300);
+            }
+        }, 4000);
+
+        // Add active state to current page
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.admin-nav-link').forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            }
+        });
+
+        // Form enhancements
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Processing...';
+                    submitBtn.disabled = true;
+                    
+                    // Re-enable after 3 seconds as fallback
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }, 3000);
+                }
+            });
+        });
+
+        // Image preview for file inputs
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        let preview = document.getElementById('imagePreview');
+                        if (!preview) {
+                            preview = document.createElement('div');
+                            preview.id = 'imagePreview';
+                            preview.className = 'mt-4';
+                            input.parentNode.appendChild(preview);
+                        }
+                        preview.innerHTML = `
+                            <div class="card-modern p-4 inline-block">
+                                <img src="${e.target.result}" alt="Preview" class="h-32 w-32 object-cover rounded-lg">
+                                <p class="text-sm text-gray-600 mt-2 text-center">Preview</p>
+                            </div>
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,37 +1,161 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Success</title>
-    <link
-            href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
-            rel="stylesheet"
-        />
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-    <div class="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-600">
-        <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg">
-            <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">Thank You for Your Purchase!</h1>
-            <p class="text-lg text-gray-700 text-center mb-6">Your order has been successfully placed. We will process it shortly.</p>
+<%- include('./partials/header') %>
 
-            <div class="bg-gray-50 p-4 rounded-md mb-6">
-                <p class="font-semibold text-gray-800">Payment ID:</p>
-                <p class="text-gray-600"><%= paymentId %></p>
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 pt-20">
+    <div class="w-full">
+        <div class="px-4 md:px-6">
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+                * {
+                    font-family: 'Inter', sans-serif;
+                }
+
+                .gradient-success {
+                    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                }
+
+                .success-animation {
+                    animation: successPulse 2s ease-in-out infinite;
+                }
+
+                @keyframes successPulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.05); }
+                }
+
+                .confetti {
+                    position: absolute;
+                    width: 8px;
+                    height: 8px;
+                    background: #fbbf24;
+                    animation: confetti-fall 3s linear infinite;
+                    border-radius: 50%;
+                }
+
+                .confetti:nth-child(1) { left: 10%; animation-delay: 0s; background: #ef4444; }
+                .confetti:nth-child(2) { left: 20%; animation-delay: 0.5s; background: #3b82f6; }
+                .confetti:nth-child(3) { left: 30%; animation-delay: 1s; background: #10b981; }
+                .confetti:nth-child(4) { left: 40%; animation-delay: 1.5s; background: #f59e0b; }
+                .confetti:nth-child(5) { left: 50%; animation-delay: 2s; background: #8b5cf6; }
+                .confetti:nth-child(6) { left: 60%; animation-delay: 0.3s; background: #ec4899; }
+                .confetti:nth-child(7) { left: 70%; animation-delay: 0.8s; background: #06b6d4; }
+                .confetti:nth-child(8) { left: 80%; animation-delay: 1.3s; background: #84cc16; }
+                .confetti:nth-child(9) { left: 90%; animation-delay: 1.8s; background: #f97316; }
+
+                @keyframes confetti-fall {
+                    0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+                    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+                }
+            </style>
+            <!-- Confetti Animation -->
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+            <div class="confetti"></div>
+
+            <!-- Success Content -->
+            <div class="card-modern p-8 w-full max-w-5xl mx-auto relative z-10">
+        <!-- Success Icon -->
+        <div class="text-center mb-8">
+            <div class="w-24 h-24 gradient-success rounded-full flex items-center justify-center mx-auto mb-6 success-animation">
+                <i class="ri-check-double-line text-white text-4xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-800 mb-3">Payment Successful!</h1>
+            <p class="text-xl text-gray-600">Thank you for your purchase</p>
+        </div>
+
+        <!-- Order Details -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-green-50 border border-green-200 rounded-2xl p-6">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="ri-secure-payment-line text-green-600 text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">Payment Details</h3>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Payment ID:</span>
+                        <span class="font-mono text-sm text-gray-800 bg-gray-100 px-2 py-1 rounded"><%= paymentId %></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Status:</span>
+                        <span class="text-green-600 font-semibold">Completed</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="bg-gray-50 p-4 rounded-md mb-6">
-                <p class="font-semibold text-gray-800">Order ID:</p>
-                <p class="text-gray-600"><%= orderId %></p>
+            <div class="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="ri-shopping-bag-3-line text-blue-600 text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">Order Information</h3>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Order ID:</span>
+                        <span class="font-mono text-sm text-gray-800 bg-gray-100 px-2 py-1 rounded"><%= orderId %></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Date:</span>
+                        <span class="text-gray-800"><%= new Date().toLocaleDateString() %></span>
+                    </div>
+                </div>
             </div>
+        </div>
 
-            <div class="flex justify-center">
-                <a href="/shop" class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out">
-                    Go Back to Shopping
-                </a>
+        <!-- Success Message -->
+        <div class="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-2xl p-6 mb-8">
+            <div class="flex items-start">
+                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+                    <i class="ri-gift-line text-green-600 text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">What's Next?</h3>
+                    <ul class="text-gray-600 space-y-1">
+                        <li class="flex items-center"><i class="ri-check-line text-green-500 mr-2"></i>Order confirmation sent to your email</li>
+                        <li class="flex items-center"><i class="ri-truck-line text-blue-500 mr-2"></i>We'll prepare your items for shipping</li>
+                        <li class="flex items-center"><i class="ri-notification-line text-purple-500 mr-2"></i>You'll receive tracking information soon</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/shop" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-semibold text-center flex items-center justify-center space-x-2 transform hover:scale-105">
+                <i class="ri-shopping-bag-line text-xl"></i>
+                <span>Continue Shopping</span>
+            </a>
+            <a href="/profile" class="bg-white border-2 border-gray-200 text-gray-700 px-8 py-4 rounded-2xl hover:bg-gray-50 transition-all duration-300 font-semibold text-center flex items-center justify-center space-x-2 transform hover:scale-105">
+                <i class="ri-user-line text-xl"></i>
+                <span>View Orders</span>
+            </a>
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+
+<script>
+    // Auto redirect after 10 seconds
+    setTimeout(() => {
+        window.location.href = '/shop';
+    }, 15000);
+
+    // Show countdown
+    let countdown = 15;
+    const timer = setInterval(() => {
+        countdown--;
+        if (countdown <= 0) {
+            clearInterval(timer);
+        }
+    }, 1000);
+</script>
+
+<%- include('./partials/footer') %>

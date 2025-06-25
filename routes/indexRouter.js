@@ -12,6 +12,11 @@ router.get("/", (req, res) => {
     res.render("index", { error, success, loggedin: false });
 });
 
+// UI Demo route
+router.get("/ui-demo", (req, res) => {
+    res.render("ui-demo");
+});
+
 router.post('/createOrder',isloggedin, createOrder);
 router.post('/verifyOrder',isloggedin, verifyPayment);
 
@@ -38,16 +43,32 @@ router.get("/sort", isloggedin, async (req, res) => {
     try {
         const { sortby } = req.query;
         let sortOption = {};
-        if (sortby === "oldest") {
-            sortOption = { createdAt: 1 };  // Sort by createdAt ascending (oldest first)
-        } else {
-            sortOption = { createdAt: -1 }; // Default sort by createdAt descending (newest first)
+        let successMessage = "";
+
+        switch (sortby) {
+            case "oldest":
+                sortOption = { createdAt: 1 };
+                successMessage = "Products sorted by oldest first";
+                break;
+            case "price-low":
+                sortOption = { price: 1 };
+                successMessage = "Products sorted by price: low to high";
+                break;
+            case "price-high":
+                sortOption = { price: -1 };
+                successMessage = "Products sorted by price: high to low";
+                break;
+            default:
+                sortOption = { createdAt: -1 };
+                successMessage = "Products sorted by newest first";
         }
+
         let products = await productModel.find().sort(sortOption);
-        let success = req.flash("success");
-        res.render("shop", { products, success });
+        req.flash("success", successMessage);
+        res.render("shop", { products, success: req.flash("success") });
     } catch (error) {
         console.error("Error fetching products:", error);
+        req.flash("error", "Failed to sort products");
         res.status(500).send("Internal Server Error");
     }
 });
@@ -126,11 +147,68 @@ router.get("/cart", isloggedin, async (req, res) => {
         res.redirect("/shop");
     }
 });
-router.get("/profile", isloggedin, async (req, res) => {
-    if (!req.user) {
-        return res.redirect("/login");
+
+// Get cart count API endpoint
+router.get("/cart/count", isloggedin, async (req, res) => {
+    try {
+        const user = await userModel.findOne({ email: req.user.email });
+        const count = user && user.cart ? user.cart.length : 0;
+        res.json({ success: true, count });
+    } catch (error) {
+        console.error("Get cart count error:", error);
+        res.status(500).json({ success: false, message: "Server error" });
     }
-    res.render("myprofile", { user: req.user });
+});
+
+// Remove item from cart
+router.post("/cart/remove/:itemId", isloggedin, async (req, res) => {
+    try {
+        const itemId = req.params.itemId;
+        const user = await userModel.findOne({ email: req.user.email });
+
+        if (user && user.cart) {
+            // Remove the item from cart
+            user.cart = user.cart.filter(item => item._id.toString() !== itemId);
+            await user.save();
+
+            res.json({ success: true, message: "Item removed from cart" });
+        } else {
+            res.status(404).json({ success: false, message: "User or cart not found" });
+        }
+    } catch (error) {
+        console.error("Remove cart item error:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+});
+router.get("/profile", isloggedin, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.redirect("/login");
+        }
+
+        // Get user with populated cart
+        const user = await userModel.findOne({ email: req.user.email }).populate("cart.product");
+
+        // Get user's orders
+        const orders = await orderModel.find({ userId: req.user._id }).populate("products.productId", "name price");
+
+        // Calculate statistics
+        const stats = {
+            totalOrders: orders.length,
+            totalSpent: orders.reduce((sum, order) => sum + order.totalAmount, 0),
+            cartItems: user.cart ? user.cart.length : 0,
+            cartValue: user.cart ? user.cart.reduce((total, item) => {
+                if (!item.product || item.product.price == null || item.product.discount == null) return total;
+                return total + (Number(item.product.price) - Number(item.product.discount)) * item.quantity;
+            }, 0) : 0
+        };
+
+        res.render("myprofile", { user, orders, stats });
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to load profile");
+        res.redirect("/shop");
+    }
 });
 
 router.get("/addtocart/:productid", isloggedin, async (req, res) => {

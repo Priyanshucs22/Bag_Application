@@ -152,13 +152,17 @@ router.get("/admin",isAuthenticated, (req, res) => {
 
 router.get("/admin/orders", isAuthenticated, async (req, res) => {
     try {
-        const orders = await ordersModel.find() .populate("userId", "fullname email")
-        .populate("products.productId", "name price discount");;
+        // Filter only paid orders and sort by creation date (newest first)
+        const orders = await ordersModel.find({ status: "paid" })
+            .populate("userId", "fullname email")
+            .populate("products.productId", "name price discount")
+            .sort({ createdAt: -1 });
+
         res.render("admin-orders", { orders });
     } catch (err) {
         console.error(err);
         req.flash("error", "Failed to load orders");
-        res.redirect("/owners/admin");
+        res.redirect("/owners/login");
     }
 });
 

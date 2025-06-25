@@ -1,86 +1,197 @@
-<%- include('./partials/header') %> 
+<%- include('./partials/header') %>
 <% let message = error || success || ''; %>
-<% let messageType = error ? 'error' : success ? 'success' : ''; %> 
+<% let messageType = error ? 'error' : success ? 'success' : ''; %>
 <% if (message.length > 0) { %>
     <div
-        class="fixed top-16 left-1/2 -translate-x-1/2 px-5 py-3 rounded-md 
-               <%= messageType === 'error' ? 'bg-red-500' : 'bg-blue-500' %> 
-               text-white text-center w-full sm:w-4/5 md:w-1/3 flex justify-center items-center shadow-md z-50"
+        class="fixed top-20 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl
+               <%= messageType === 'error' ? 'gradient-secondary' : 'gradient-success' %>
+               text-white text-center w-full sm:w-4/5 md:w-1/3 flex justify-center items-center shadow-modern-lg z-50 glass"
         id="flash-message"
     >
-        <span class="inline-block"> <%= message %> </span>
+        <i class="<%= messageType === 'error' ? 'ri-error-warning-line' : 'ri-check-line' %> mr-2"></i>
+        <span class="inline-block font-medium"> <%= message %> </span>
     </div>
 <% } %>
 
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300 px-5">
-    <div class="w-full max-w-5xl bg-white shadow-lg rounded-lg flex flex-col md:flex-row overflow-hidden">
-        <!-- Left Section (Register) -->
-        <div class="w-full md:w-1/2 p-10 flex flex-col justify-center">
-            <h2 class="text-3xl font-bold text-blue-600">Join the Bag Shop</h2>
-            <p class="text-gray-600 mt-2 mb-6">Create an account to start shopping.</p>
-            <form autocomplete="off" action="/users/register" method="post" class="space-y-4">
-                <input
-                    class="w-full bg-gray-100 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    type="text"
-                    placeholder="Full Name"
-                    name="fullname"
-                />
-                <input
-                    class="w-full bg-gray-100 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    type="email"
-                    placeholder="Email"
-                    name="email"
-                />
-                <input
-                    class="w-full bg-gray-100 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    type="password"
-                    placeholder="Password"
-                    name="password"
-                />
-                <button
-                    class="w-full bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition duration-300"
-                    type="submit"
-                >
-                    Sign Up
-                </button>
-            </form>
-        </div>
+<div class="min-h-screen flex items-center justify-center px-5 pt-20">
+    <!-- Background Elements -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-80 h-80 gradient-primary rounded-full opacity-20 blur-3xl"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 gradient-secondary rounded-full opacity-20 blur-3xl"></div>
+    </div>
 
-        <!-- Right Section (Login) -->
-        <div class="w-full md:w-1/2 bg-blue-600 text-white p-10 flex flex-col justify-center relative">
-            <h2 class="text-3xl font-bold">Welcome Back!</h2>
-            <p class="mt-2 mb-6 text-gray-200">Already have an account? Log in here.</p>
-            <form autocomplete="off" action="/users/login" method="post" class="space-y-4">
-                <input
-                    class="w-full bg-white text-gray-800 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
-                    type="email"
-                    placeholder="Email"
-                    name="email"
-                />
-                <input
-                    class="w-full bg-white text-gray-800 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
-                    type="password"
-                    placeholder="Password"
-                    name="password"
-                />
-                <button
-                    class="w-full bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition duration-300"
-                    type="submit"
-                >
-                    Log In
-                </button>
-            </form>
+    <div class="w-full max-w-6xl card-modern overflow-hidden relative z-10">
+        <!-- Left Section (Register) -->
+        <div class="flex flex-col md:flex-row">
+            <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+                <div class="mb-8">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center mr-4">
+                            <i class="ri-shopping-bag-line text-white text-xl"></i>
+                        </div>
+                        <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                            Join the Bag Shop
+                        </h2>
+                    </div>
+                    <p class="text-gray-600 text-lg">Create an account to discover premium bags and start your shopping journey.</p>
+                </div>
+
+                <form autocomplete="off" action="/users/register" method="post" class="space-y-6">
+                    <div class="relative">
+                        <i class="ri-user-line absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input
+                            class="input-modern-enhanced pl-12"
+                            type="text"
+                            placeholder="Full Name"
+                            name="fullname"
+                            required
+                        />
+                    </div>
+                    <div class="relative">
+                        <i class="ri-mail-line absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input
+                            class="input-modern-enhanced pl-12"
+                            type="email"
+                            placeholder="Email Address"
+                            name="email"
+                            required
+                        />
+                    </div>
+                    <div class="relative">
+                        <i class="ri-lock-line absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input
+                            class="input-modern-enhanced pl-12"
+                            type="password"
+                            placeholder="Password"
+                            name="password"
+                            required
+                        />
+                    </div>
+                    <button
+                        class="w-full btn-modern-primary text-lg py-4"
+                        type="submit"
+                    >
+                        <i class="ri-user-add-line mr-2"></i>
+                        Create Account
+                    </button>
+                </form>
+
+                <p class="text-center text-gray-500 mt-6">
+                    Already have an account?
+                    <button onclick="switchToLogin()" class="text-blue-600 hover:text-blue-700 font-medium transition-modern">
+                        Sign in here
+                    </button>
+                </p>
+            </div>
+
+            <!-- Right Section (Login) -->
+            <div class="w-full md:w-1/2 gradient-primary text-white p-8 md:p-12 flex flex-col justify-center relative overflow-hidden">
+                <!-- Background Pattern -->
+                <div class="absolute inset-0 opacity-10">
+                    <div class="absolute top-10 right-10 w-32 h-32 border border-white rounded-full"></div>
+                    <div class="absolute bottom-10 left-10 w-24 h-24 border border-white rounded-full"></div>
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 border border-white rounded-full"></div>
+                </div>
+
+                <div class="relative z-10">
+                    <div class="mb-8">
+                        <h2 class="text-4xl font-bold mb-4">Welcome Back!</h2>
+                        <p class="text-white/80 text-lg">Sign in to continue your shopping experience.</p>
+                    </div>
+
+                    <form autocomplete="off" action="/users/login" method="post" class="space-y-6">
+                        <div class="relative">
+                            <i class="ri-mail-line absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input
+                                class="w-full bg-white/90 backdrop-blur-sm text-gray-800 px-4 py-4 pl-12 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-white focus:bg-white transition-modern"
+                                type="email"
+                                placeholder="Email Address"
+                                name="email"
+                                required
+                            />
+                        </div>
+                        <div class="relative">
+                            <i class="ri-lock-line absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input
+                                class="w-full bg-white/90 backdrop-blur-sm text-gray-800 px-4 py-4 pl-12 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-white focus:bg-white transition-modern"
+                                type="password"
+                                placeholder="Password"
+                                name="password"
+                                required
+                            />
+                        </div>
+                        <button
+                            class="w-full btn-modern-secondary text-lg py-4"
+                            type="submit"
+                        >
+                            <i class="ri-login-box-line mr-2"></i>
+                            Sign In
+                        </button>
+                    </form>
+
+                    <p class="text-center text-white/70 mt-6">
+                        New to Bag Shop?
+                        <button onclick="switchToRegister()" class="text-white hover:text-white/80 font-medium transition-modern underline">
+                            Create an account
+                        </button>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+    // Flash message auto-hide with animation
     setTimeout(function () {
         const messageElement = document.getElementById("flash-message");
         if (messageElement) {
-            messageElement.style.display = "none";
+            messageElement.style.transform = "translateX(-50%) translateY(-100%)";
+            messageElement.style.opacity = "0";
+            setTimeout(() => {
+                messageElement.style.display = "none";
+            }, 300);
         }
-    }, 3000);
+    }, 4000);
+
+    // Form switching functionality (for future enhancement)
+    function switchToLogin() {
+        // This could be enhanced to show/hide forms dynamically
+        console.log("Switch to login");
+    }
+
+    function switchToRegister() {
+        // This could be enhanced to show/hide forms dynamically
+        console.log("Switch to register");
+    }
+
+    // Add loading states to forms
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+
+            submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Processing...';
+            submitBtn.disabled = true;
+
+            // Re-enable after 5 seconds as fallback
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 5000);
+        });
+    });
+
+    // Add input focus effects
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+        });
+
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    });
 </script>
 
 <%- include('./partials/footer') %>
