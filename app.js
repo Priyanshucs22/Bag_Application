@@ -5,6 +5,7 @@ const path = require('path');
 const session = require('express-session');
 const flash = require('connect-flash');
 const MongoStore = require("connect-mongo");
+const xssProtection = require('./middleware/xssProtection');
 require("dotenv").config();
 
 const ownersRouter = require('./routes/ownersRouter');
@@ -30,8 +31,9 @@ app.use(
 app.use(flash());
 app.use(cookeiParser());
 app.use(express.json());
-app.use(express.static(path.join(__dirname,'public')));
 app.use(express.urlencoded({ extended:true}));
+app.use(xssProtection());
+app.use(express.static(path.join(__dirname,'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -41,4 +43,15 @@ app.use("/owners",ownersRouter);
 app.use("/users",usersRouter);
 app.use("/products",productsRouter);
 app.use("/wishlist",wishlistRouter);
-app.listen(5000);
+
+// For Vercel deployment
+const PORT = process.env.PORT || 5000;
+
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+// Export the app for Vercel
+module.exports = app;
