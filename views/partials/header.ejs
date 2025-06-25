@@ -9,6 +9,7 @@
             rel="stylesheet"
         />
         <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Note: For production, install Tailwind CSS as a PostCSS plugin or use the Tailwind CLI -->
         <style>
             /* Modern CSS Utilities */
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -906,9 +907,9 @@
                 <i class="ri-search-line text-gray-500 mr-2"></i>
                 <input type="text" id="searchInput" placeholder="Search products..."
                     class="bg-transparent border-none outline-none w-48 sm:w-56 md:w-64 px-2 text-gray-700 placeholder-gray-500" />
-                <button type="button" onclick="searchProducts()"
+                <button type="button" onclick="performLiveSearch()"
                     class="btn-primary ml-2 px-4 py-2 text-sm">
-                    Search
+                    <i class="ri-search-line"></i>
                 </button>
             </form>
 
@@ -945,51 +946,55 @@
                 <i class="ri-search-line text-gray-500 mr-2"></i>
                 <input type="text" name="query" id="searchInputMobile" placeholder="Search products..."
                     class="bg-transparent border-none outline-none w-full px-2 text-gray-700 placeholder-gray-500" />
-                <button type="submit" onclick="searchProducts()"
+                <button type="button" onclick="performLiveSearch()"
                     class="btn-primary ml-2 px-4 py-2 text-sm">
-                    Search
+                    <i class="ri-search-line"></i>
                 </button>
             </form>
             <% } %>
 
         <script>
-            document.getElementById("menuBtn").addEventListener("click", function () {
-                const navLinks = document.getElementById("navLinks");
-                navLinks.classList.toggle("hidden");
+            // Add null checks to prevent errors on admin pages
+            const menuBtn = document.getElementById("menuBtn");
+            const navLinks = document.getElementById("navLinks");
 
-                // Add smooth animation
-                if (!navLinks.classList.contains("hidden")) {
-                    navLinks.classList.add("mobile-menu", "active");
-                } else {
-                    navLinks.classList.remove("active");
-                    setTimeout(() => {
-                        navLinks.classList.remove("mobile-menu");
-                    }, 300);
-                }
-            });
+            if (menuBtn && navLinks) {
+                menuBtn.addEventListener("click", function () {
+                    navLinks.classList.toggle("hidden");
 
-            // Close mobile menu when clicking outside
-            document.addEventListener("click", function(event) {
-                const navLinks = document.getElementById("navLinks");
-                const menuBtn = document.getElementById("menuBtn");
+                    // Add smooth animation
+                    if (!navLinks.classList.contains("hidden")) {
+                        navLinks.classList.add("mobile-menu", "active");
+                    } else {
+                        navLinks.classList.remove("active");
+                        setTimeout(() => {
+                            navLinks.classList.remove("mobile-menu");
+                        }, 300);
+                    }
+                });
 
-                if (!navLinks.contains(event.target) && !menuBtn.contains(event.target)) {
-                    navLinks.classList.add("hidden");
-                    navLinks.classList.remove("active");
-                }
-            });
+                // Close mobile menu when clicking outside
+                document.addEventListener("click", function(event) {
+                    if (!navLinks.contains(event.target) && !menuBtn.contains(event.target)) {
+                        navLinks.classList.add("hidden");
+                        navLinks.classList.remove("active");
+                    }
+                });
+            }
 
-            // Add scroll effect to navbar
-            window.addEventListener("scroll", function() {
-                const navbar = document.querySelector("nav");
-                if (window.scrollY > 50) {
-                    navbar.style.background = "rgba(255, 255, 255, 0.98)";
-                    navbar.style.backdropFilter = "blur(25px)";
-                } else {
-                    navbar.style.background = "rgba(255, 255, 255, 0.95)";
-                    navbar.style.backdropFilter = "blur(20px)";
-                }
-            });
+            // Add scroll effect to navbar (only if navbar exists)
+            const navbar = document.querySelector("nav");
+            if (navbar) {
+                window.addEventListener("scroll", function() {
+                    if (window.scrollY > 50) {
+                        navbar.style.background = "rgba(255, 255, 255, 0.98)";
+                        navbar.style.backdropFilter = "blur(25px)";
+                    } else {
+                        navbar.style.background = "rgba(255, 255, 255, 0.95)";
+                        navbar.style.backdropFilter = "blur(20px)";
+                    }
+                });
+            }
 
             // Flash Notification System
             window.showNotification = function(message, type = 'info', duration = 4000) {
@@ -1102,17 +1107,149 @@
                 }
             }
 
-            // Load counts when page loads
+            // Load counts when page loads (only if elements exist)
             document.addEventListener('DOMContentLoaded', function() {
-                loadWishlistCount();
-                loadCartCount();
+                // Only load counts if we're on a page with the navbar elements
+                if (document.getElementById('wishlistCount') || document.getElementById('cartCount')) {
+                    loadWishlistCount();
+                    loadCartCount();
+                }
             });
+
+            // Live Search Functionality
+            function initializeLiveSearch() {
+                const searchInput = document.getElementById('searchInput');
+                const searchInputMobile = document.getElementById('searchInputMobile');
+
+                // Add live search to desktop search input
+                if (searchInput) {
+                    searchInput.addEventListener('input', performLiveSearch);
+                    searchInput.addEventListener('keyup', performLiveSearch);
+                }
+
+                // Add live search to mobile search input
+                if (searchInputMobile) {
+                    searchInputMobile.addEventListener('input', performLiveSearch);
+                    searchInputMobile.addEventListener('keyup', performLiveSearch);
+                }
+            }
+
+            function performLiveSearch() {
+                const searchInput = document.getElementById('searchInput');
+                const searchInputMobile = document.getElementById('searchInputMobile');
+
+                // Get query from either desktop or mobile search input
+                let query = '';
+                if (searchInput && searchInput.value) {
+                    query = searchInput.value.toLowerCase().trim();
+                } else if (searchInputMobile && searchInputMobile.value) {
+                    query = searchInputMobile.value.toLowerCase().trim();
+                }
+
+                // Find all product cards using multiple selectors to cover different page layouts
+                const productSelectors = [
+                    '.card-hover-effect', // Main product cards
+                    '.bg-white.rounded-lg.shadow-md', // Alternative product cards
+                    '.card-modern.group', // Admin product cards
+                    '.product-card', // Generic product cards
+                    '[data-product-name]' // Products with data attributes
+                ];
+
+                let products = [];
+                productSelectors.forEach(selector => {
+                    const foundProducts = document.querySelectorAll(selector);
+                    products = [...products, ...foundProducts];
+                });
+
+                // Remove duplicates
+                products = [...new Set(products)];
+
+                let visibleCount = 0;
+
+                products.forEach(product => {
+                    if (!product) return;
+
+                    let shouldShow = true;
+
+                    if (query !== '') {
+                        // Try multiple ways to find product name and price
+                        const nameElement = product.querySelector('h3') ||
+                                          product.querySelector('.product-name') ||
+                                          product.querySelector('[data-product-name]');
+
+                        const priceElement = product.querySelector('h4') ||
+                                           product.querySelector('.product-price') ||
+                                           product.querySelector('[data-product-price]');
+
+                        let name = '';
+                        let price = '';
+
+                        if (nameElement) {
+                            name = (nameElement.innerText || nameElement.textContent || '').toLowerCase();
+                        }
+
+                        if (priceElement) {
+                            price = (priceElement.innerText || priceElement.textContent || '').toLowerCase();
+                        }
+
+                        // Also check data attributes
+                        const dataName = product.getAttribute('data-product-name') || '';
+                        const dataPrice = product.getAttribute('data-product-price') || '';
+
+                        const searchText = `${name} ${price} ${dataName} ${dataPrice}`.toLowerCase();
+                        shouldShow = searchText.includes(query);
+                    }
+
+                    if (shouldShow) {
+                        product.style.display = 'block';
+                        product.style.opacity = '1';
+                        visibleCount++;
+                    } else {
+                        product.style.display = 'none';
+                        product.style.opacity = '0';
+                    }
+                });
+
+                // Show search results count (if there's a results container)
+                const resultsContainer = document.getElementById('searchResults');
+                if (resultsContainer && query !== '') {
+                    resultsContainer.textContent = `Found ${visibleCount} product(s)`;
+                    resultsContainer.style.display = 'block';
+                } else if (resultsContainer) {
+                    resultsContainer.style.display = 'none';
+                }
+
+                // Show "no results" message if needed
+                const noResultsContainer = document.getElementById('noSearchResults');
+                if (noResultsContainer) {
+                    if (query !== '' && visibleCount === 0) {
+                        noResultsContainer.style.display = 'block';
+                    } else {
+                        noResultsContainer.style.display = 'none';
+                    }
+                }
+            }
+
+            // Initialize live search when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                initializeLiveSearch();
+            });
+
+            // Also initialize if DOM is already loaded
+            if (document.readyState !== 'loading') {
+                initializeLiveSearch();
+            }
+
+            // Global search function for backward compatibility
+            window.searchProducts = performLiveSearch;
 
             // Global functions (can be called from other pages)
             window.updateWishlistCount = updateWishlistCount;
             window.loadWishlistCount = loadWishlistCount;
             window.updateCartCount = updateCartCount;
             window.loadCartCount = loadCartCount;
+            window.performLiveSearch = performLiveSearch;
+            window.initializeLiveSearch = initializeLiveSearch;
         </script>
     </body>
 </html>

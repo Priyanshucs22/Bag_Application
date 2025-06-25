@@ -4,18 +4,6 @@ const orderModel=require("../models/orders-model")
 const userModel=require("../models/user-model")
 require("dotenv").config();
 
-// Debug environment variables
-console.log('Environment variables check:');
-console.log('RAZORPAY_KEY_ID:', process.env.RAZORPAY_KEY_ID);
-console.log('RAZORPAY_SECRET_KEY:', process.env.RAZORPAY_SECRET_KEY ? 'SET' : 'NOT SET');
-
-// Validate required environment variables
-if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_SECRET_KEY) {
-    console.error('❌ Missing Razorpay environment variables:');
-    console.error('RAZORPAY_KEY_ID:', process.env.RAZORPAY_KEY_ID ? '✅ Set' : '❌ Missing');
-    console.error('RAZORPAY_SECRET_KEY:', process.env.RAZORPAY_SECRET_KEY ? '✅ Set' : '❌ Missing');
-    throw new Error('Missing required Razorpay environment variables');
-}
 
 const razorpayInstance = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,

@@ -83,12 +83,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <% products.forEach(function(product) { %>
                     <div class="card-modern overflow-hidden group">
-                        <div class="h-48 flex items-center justify-center relative" style="background: <%= product.bgcolor %>;">
+                        <div class="h-48 flex items-center justify-center relative" style="background: '<%= product.bgcolor %>';">
                             <img class="h-36 object-contain transition-modern group-hover:scale-105"
                                  src="data:image/jpeg;base64,<%= product.image.toString('base64') %>"
-                                 alt="<%= product.name %>" />
+                                 alt="<%= product.name %>"
+                                 style="opacity: 1 !important;" />
                         </div>
-                        <div class="p-6" style="background: <%= product.panelcolor %>; color: <%= product.textcolor %>;">
+                        <div class="p-6" style="background: '<%= product.panelcolor %>'; color: '<%= product.textcolor %>';">
                             <h3 class="font-bold text-lg mb-2 line-clamp-2"><%= product.name %></h3>
                             <div class="flex items-center justify-between mb-4">
                                 <div>

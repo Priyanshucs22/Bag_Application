@@ -1,6 +1,15 @@
 <%- include('./partials/header') %>
 
 <style>
+    /* Ensure sidebar loads immediately on desktop */
+    @media (min-width: 768px) {
+        #sidebar {
+            transform: translateX(0) !important;
+            opacity: 1 !important;
+            display: block !important;
+        }
+    }
+
     /* Premium Price Range Slider Styles */
     .premium-slider-container {
         position: relative;
@@ -129,9 +138,9 @@
                 </button>
 
                 <!-- Left Sidebar -->
-                <aside id="sidebar" class="w-full md:w-80 card-modern p-6 flex flex-col flex-shrink-0 md:sticky md:top-24 md:block hidden md:h-[calc(100vh-6rem)] md:overflow-y-auto custom-scrollbar transition-all duration-300 ease-in-out transform"
-                       style="transform: translateX(-100%); opacity: 0;"
-                       data-visible="false">
+                <aside id="sidebar" class="w-full md:w-80 card-modern p-6 flex flex-col flex-shrink-0 md:sticky md:top-24 block hidden md:block md:h-[calc(100vh-6rem)] md:overflow-y-auto custom-scrollbar transition-all duration-300 ease-in-out transform"
+                       style="transform: translateX(0); opacity: 1;"
+                       data-visible="true">
                     <!-- Sort Section -->
                     <div class="mb-8">
                         <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
@@ -353,12 +362,16 @@
         <% if (products.length > 0) { %>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <% products.forEach(function(product){ %>
-            <div class="card-modern overflow-hidden group cursor-pointer card-hover-effect" data-price="<%= product.price %>">
+            <div class="card-modern overflow-hidden group cursor-pointer card-hover-effect"
+                 data-price="<%= product.price %>"
+                 data-product-name="<%= product.name %>"
+                 data-product-price="₹<%= Math.floor(product.price - (product.price * product.discount / 100)) %>">
                 <!-- Product Image -->
-                <div class="h-64 flex items-center justify-center relative overflow-hidden" style="background: <%= product.bgcolor %>;">
+                <div class="h-64 flex items-center justify-center relative overflow-hidden" style="background: '<%= product.bgcolor %>';">
                     <img class="h-48 object-contain transition-modern group-hover:scale-110"
                          src="data:image/jpeg;base64,<%= product.image.toString('base64') %>"
-                         alt="<%= product.name %>" />
+                         alt="<%= product.name %>"
+                         style="opacity: 1 !important;" />
 
                     <!-- Overlay on Hover -->
                     <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-modern flex items-center justify-center">
@@ -371,7 +384,7 @@
                 </div>
 
                 <!-- Product Info -->
-                <div class="p-6" style="background: <%= product.panelcolor %>; color: <%= product.textcolor %>;">
+                <div class="p-6" style="background:'<%= product.panelcolor %>'; color: '<%= product.textcolor %>';">
                     <div class="flex justify-between items-start mb-3">
                         <div class="flex-1">
                             <h3 class="font-bold text-lg mb-1 line-clamp-2"><%= product.name %></h3>
