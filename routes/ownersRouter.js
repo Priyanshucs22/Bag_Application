@@ -152,8 +152,8 @@ router.get("/admin",isAuthenticated, (req, res) => {
 
 router.get("/admin/orders", isAuthenticated, async (req, res) => {
     try {
-        // Filter only paid orders and sort by creation date (newest first)
-        const orders = await ordersModel.find({ status: "paid" })
+        // Get all orders (not just paid) and sort by creation date (newest first)
+        const orders = await ordersModel.find({})
             .populate("userId", "fullname email")
             .populate("products.productId", "name price discount")
             .sort({ createdAt: -1 });
@@ -163,6 +163,37 @@ router.get("/admin/orders", isAuthenticated, async (req, res) => {
         console.error(err);
         req.flash("error", "Failed to load orders");
         res.redirect("/owners/login");
+    }
+});
+
+// Update order status route
+router.post("/admin/orders/:orderId/update", isAuthenticated, async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const { status, trackingNumber } = req.body;
+
+        const updateData = { status };
+
+        if (trackingNumber) {
+            updateData.trackingNumber = trackingNumber;
+        }
+
+        if (status === 'shipped' && !updateData.shippedAt) {
+            updateData.shippedAt = new Date();
+        }
+
+        if (status === 'delivered') {
+            updateData.deliveredAt = new Date();
+        }
+
+        await ordersModel.findByIdAndUpdate(orderId, updateData);
+
+        req.flash("success", "Order status updated successfully");
+        res.redirect("/owners/admin/orders");
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to update order status");
+        res.redirect("/owners/admin/orders");
     }
 });
 

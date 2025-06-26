@@ -140,13 +140,63 @@
                         </div>
                     </div>
 
+                    <!-- Payment Method Selection -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Choose Payment Method</h3>
+                        <div class="space-y-3">
+                            <!-- Online Payment -->
+                            <div class="border border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-colors cursor-pointer payment-method" data-method="online">
+                                <div class="flex items-center">
+                                    <input type="radio" id="online-payment" name="payment-method" value="online" class="mr-3" checked>
+                                    <label for="online-payment" class="flex-1 cursor-pointer">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center">
+                                                <i class="ri-bank-card-line text-xl text-blue-600 mr-3"></i>
+                                                <div>
+                                                    <div class="font-semibold text-gray-800">Online Payment</div>
+                                                    <div class="text-sm text-gray-600">Pay securely with Razorpay</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <i class="ri-visa-line text-blue-600"></i>
+                                                <i class="ri-mastercard-line text-red-600"></i>
+                                                <span class="text-xs text-gray-500">& more</span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Cash on Delivery -->
+                            <div class="border border-gray-200 rounded-xl p-4 hover:border-orange-300 transition-colors cursor-pointer payment-method" data-method="cod">
+                                <div class="flex items-center">
+                                    <input type="radio" id="cod-payment" name="payment-method" value="cod" class="mr-3">
+                                    <label for="cod-payment" class="flex-1 cursor-pointer">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center">
+                                                <i class="ri-hand-coin-line text-xl text-orange-600 mr-3"></i>
+                                                <div>
+                                                    <div class="font-semibold text-gray-800">Cash on Delivery</div>
+                                                    <div class="text-sm text-gray-600">Pay when you receive your order</div>
+                                                </div>
+                                            </div>
+                                            <div class="text-sm text-orange-600 font-medium">
+                                                No extra charges
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <button id="payButton"
                         class="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-lg py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl mb-4 flex items-center justify-center space-x-2">
                         <i class="ri-secure-payment-line text-xl"></i>
-                        <span>Proceed to Payment</span>
+                        <span id="payButtonText">Proceed to Payment</span>
                     </button>
 
-                    <div class="text-center text-sm text-gray-500">
+                    <div class="text-center text-sm text-gray-500" id="paymentInfo">
                         <i class="ri-shield-check-line mr-1"></i>
                         Secure payment powered by Razorpay
                     </div>
@@ -258,10 +308,42 @@
                     }
                 };
 
+                // Payment method selection handlers
+                document.querySelectorAll('.payment-method').forEach(method => {
+                    method.addEventListener('click', function() {
+                        const radio = this.querySelector('input[type="radio"]');
+                        radio.checked = true;
+                        updatePaymentUI();
+                    });
+                });
+
+                document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
+                    radio.addEventListener('change', updatePaymentUI);
+                });
+
+                // Initialize payment UI
+                updatePaymentUI();
+
+                function updatePaymentUI() {
+                    const selectedMethod = document.querySelector('input[name="payment-method"]:checked').value;
+                    const payButton = document.getElementById('payButton');
+                    const payButtonText = document.getElementById('payButtonText');
+                    const paymentInfo = document.getElementById('paymentInfo');
+
+                    if (selectedMethod === 'cod') {
+                        payButtonText.textContent = 'Place Order (COD)';
+                        paymentInfo.innerHTML = '<i class="ri-truck-line mr-1"></i>Pay when you receive your order';
+                    } else {
+                        payButtonText.textContent = 'Proceed to Payment';
+                        paymentInfo.innerHTML = '<i class="ri-shield-check-line mr-1"></i>Secure payment powered by Razorpay';
+                    }
+                }
+
                 document.getElementById("payButton").addEventListener("click", async function () {
                     try {
                         const payBtn = this;
                         const originalText = payBtn.innerHTML;
+                        const selectedPaymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
 
                         // Add loading state
                         payBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Processing...';
@@ -277,6 +359,27 @@
                             return;
                         }
 
+                        // Handle Cash on Delivery
+                        if (selectedPaymentMethod === 'cod') {
+                            const response = await fetch("/createCODOrder", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ amount: Math.round(amount), user_email: user_email })
+                            });
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                window.location.href = `/order-success?order_id=${result.order_id}&payment_method=cod`;
+                            } else {
+                                alert(result.message || "Failed to place order. Try again.");
+                                payBtn.innerHTML = originalText;
+                                payBtn.disabled = false;
+                            }
+                            return;
+                        }
+
+                        // Handle Online Payment
                         const response = await fetch("/createOrder", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },

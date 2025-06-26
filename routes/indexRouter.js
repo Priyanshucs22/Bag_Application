@@ -20,6 +20,56 @@ router.get("/ui-demo", (req, res) => {
 router.post('/createOrder',isloggedin, createOrder);
 router.post('/verifyOrder',isloggedin, verifyPayment);
 
+// COD Order route
+router.post('/createCODOrder', isloggedin, async (req, res) => {
+    try {
+        const { user_email, amount } = req.body;
+        if (!user_email || !amount) {
+            return res.status(400).json({ success: false, message: "User email and amount are required" });
+        }
+
+        // Fetch user and cart details
+        const user = await userModel.findOne({ email: user_email }).populate("cart.product");
+
+        if (!user || user.cart.length === 0) {
+            return res.status(400).json({ success: false, message: "Cart is empty." });
+        }
+
+        // Create COD order in DB
+        const newOrder = new orderModel({
+            userId: user._id,
+            products: user.cart.map(item => ({
+                productId: item.product._id,
+                quantity: item.quantity,
+                totalPrice: (item.product.price - item.product.discount) * item.quantity
+            })),
+            totalAmount: amount,
+            status: "paid", // COD orders are marked as paid immediately
+            paymentMethod: "cod",
+            paymentId: null
+        });
+
+        await newOrder.save();
+
+        // Clear user's cart after successful order
+        user.cart = [];
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "COD Order placed successfully",
+            order_id: newOrder._id
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        });
+    }
+});
+
 
 router.get("/shop", isloggedin, async (req, res) => {
     try {
@@ -35,8 +85,40 @@ router.get("/shop", isloggedin, async (req, res) => {
 router.get("/order-success", isloggedin, (req, res) => {
     res.render("order-success", {
         paymentId: req.query.payment_id,
-        orderId: req.query.order_id
+        orderId: req.query.order_id,
+        paymentMethod: req.query.payment_method
     });
+});
+
+// Orders page route
+router.get("/orders", isloggedin, async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const skip = (page - 1) * limit;
+
+        // Get user's orders with pagination
+        const orders = await orderModel.find({ userId: req.user._id })
+            .populate("products.productId", "name price discount")
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        // Get total count for pagination
+        const totalOrders = await orderModel.countDocuments({ userId: req.user._id });
+        const totalPages = Math.ceil(totalOrders / limit);
+
+        res.render("orders", {
+            orders,
+            currentPage: page,
+            totalPages,
+            totalOrders
+        });
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to load orders");
+        res.redirect("/profile");
+    }
 });
 
 router.get("/sort", isloggedin, async (req, res) => {

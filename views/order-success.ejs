@@ -79,13 +79,31 @@
                     <h3 class="text-lg font-semibold text-gray-800">Payment Details</h3>
                 </div>
                 <div class="space-y-2">
+                    <% if (paymentId) { %>
                     <div class="flex justify-between">
                         <span class="text-gray-600">Payment ID:</span>
                         <span class="font-mono text-sm text-gray-800 bg-gray-100 px-2 py-1 rounded"><%= paymentId %></span>
                     </div>
+                    <% } %>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Payment Method:</span>
+                        <span class="font-semibold text-gray-800">
+                            <% if (typeof paymentMethod !== 'undefined' && paymentMethod === 'cod') { %>
+                                <i class="ri-hand-coin-line text-orange-600 mr-1"></i>Cash on Delivery
+                            <% } else { %>
+                                <i class="ri-bank-card-line text-blue-600 mr-1"></i>Online Payment
+                            <% } %>
+                        </span>
+                    </div>
                     <div class="flex justify-between">
                         <span class="text-gray-600">Status:</span>
-                        <span class="text-green-600 font-semibold">Completed</span>
+                        <span class="text-green-600 font-semibold">
+                            <% if (typeof paymentMethod !== 'undefined' && paymentMethod === 'cod') { %>
+                                Order Placed
+                            <% } else { %>
+                                Payment Completed
+                            <% } %>
+                        </span>
                     </div>
                 </div>
             </div>

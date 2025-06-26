@@ -90,8 +90,11 @@
         <div class="card-modern p-8">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Recent Orders</h2>
-                <% if (orders.length > 3) { %>
-                <a href="/orders" class="text-blue-600 hover:text-blue-800 font-medium">View All</a>
+                <% if (orders.length > 0) { %>
+                <a href="/orders" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-medium flex items-center space-x-2 transform hover:scale-105">
+                    <span>View All</span>
+                    <i class="ri-arrow-right-line"></i>
+                </a>
                 <% } %>
             </div>
 
@@ -121,12 +124,27 @@
                             </div>
                             <div class="text-sm text-gray-500">
                                 <%= order.products.length %> item<%= order.products.length > 1 ? 's' : '' %>
+                                <% if (order.trackingNumber) { %>
+                                <span class="mx-2">•</span>
+                                <span class="text-blue-600 font-medium">Tracking: <%= order.trackingNumber %></span>
+                                <% } %>
                             </div>
+                            <% if (order.status === 'shipped' || order.status === 'delivered') { %>
+                            <div class="mt-2 flex items-center text-sm">
+                                <i class="ri-truck-line mr-1 text-blue-600"></i>
+                                <span class="text-blue-600 font-medium">
+                                    <%= order.status === 'shipped' ? 'In Transit' : 'Delivered' %>
+                                </span>
+                            </div>
+                            <% } %>
                         </div>
                         <div class="text-right">
                             <div class="text-2xl font-bold text-gray-800 mb-1">₹<%= order.totalAmount.toLocaleString() %></div>
                             <% if (order.paymentId) { %>
                             <div class="text-sm text-gray-500">Payment ID: <%= order.paymentId.slice(-8) %></div>
+                            <% } %>
+                            <% if (order.paymentMethod === 'cod') { %>
+                            <div class="text-sm text-orange-600 font-medium">Cash on Delivery</div>
                             <% } %>
                         </div>
                     </div>

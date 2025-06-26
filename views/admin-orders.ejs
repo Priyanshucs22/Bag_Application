@@ -7,8 +7,8 @@
                         <i class="ri-file-list-3-line text-white text-2xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-4xl font-bold text-gray-800 mb-1">Paid Orders</h1>
-                        <p class="text-gray-600">View and manage all successfully paid orders</p>
+                        <h1 class="text-4xl font-bold text-gray-800 mb-1">All Orders</h1>
+                        <p class="text-gray-600">View and manage all customer orders</p>
                     </div>
                 </div>
 
@@ -21,7 +21,7 @@
                             </div>
                             <div>
                                 <h3 class="text-2xl font-bold text-gray-800"><%= orders.length %></h3>
-                                <p class="text-gray-600">Paid Orders</p>
+                                <p class="text-gray-600">Total Orders</p>
                             </div>
                         </div>
                     </div>
@@ -130,8 +130,29 @@
                                         </div>
                                         <div class="flex justify-between py-1">
                                             <span>Status:</span>
-                                            <span class="text-green-600 font-semibold">Paid</span>
+                                            <span class="font-semibold
+                                                <%= order.status === 'paid' ? 'text-green-600' :
+                                                    order.status === 'pending' ? 'text-yellow-600' :
+                                                    order.status === 'shipped' ? 'text-blue-600' :
+                                                    order.status === 'delivered' ? 'text-purple-600' :
+                                                    'text-gray-600' %>">
+                                                <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                                            </span>
                                         </div>
+                                        <% if (order.paymentMethod) { %>
+                                        <div class="flex justify-between py-1">
+                                            <span>Payment Method:</span>
+                                            <span class="font-medium text-gray-800">
+                                                <%= order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment' %>
+                                            </span>
+                                        </div>
+                                        <% } %>
+                                        <% if (order.trackingNumber) { %>
+                                        <div class="flex justify-between py-1">
+                                            <span>Tracking Number:</span>
+                                            <span class="font-mono text-sm text-blue-600"><%= order.trackingNumber %></span>
+                                        </div>
+                                        <% } %>
                                     </div>
                                 </div>
                             </div>
@@ -163,6 +184,39 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Order Status Update -->
+                        <div class="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                            <h4 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+                                <i class="ri-settings-3-line mr-2"></i>
+                                Update Order Status
+                            </h4>
+                            <form action="/owners/admin/orders/<%= order._id %>/update" method="POST" class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Order Status</label>
+                                        <select name="status" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                                            <option value="paid" <%= order.status === 'paid' ? 'selected' : '' %>>Paid</option>
+                                            <option value="shipped" <%= order.status === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                                            <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Tracking Number (Optional)</label>
+                                        <input type="text" name="trackingNumber" value="<%= order.trackingNumber || '' %>"
+                                               class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                               placeholder="Enter tracking number">
+                                    </div>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition-colors flex items-center">
+                                        <i class="ri-save-line mr-2"></i>
+                                        Update Order
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <% }); %>
@@ -172,8 +226,8 @@
                 <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
                     <i class="ri-file-list-3-line text-4xl text-gray-400"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-3">No Paid Orders Yet</h3>
-                <p class="text-gray-600 mb-8 max-w-md mx-auto">When customers complete their purchases, their paid orders will appear here.</p>
+                <h3 class="text-2xl font-bold text-gray-800 mb-3">No Orders Yet</h3>
+                <p class="text-gray-600 mb-8 max-w-md mx-auto">When customers place orders, they will appear here for you to manage.</p>
                 <a href="/owners/login" class="btn-modern-primary">
                     <i class="ri-dashboard-3-line mr-2"></i>
                     Back to Dashboard

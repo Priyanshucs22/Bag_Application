@@ -10,9 +10,21 @@ const orderSchema = new mongoose.Schema({
     ],
     totalAmount: { type: Number, required: true }, // Sum of all product totalPrice
     status: { type: String, enum: ["pending", "paid", "shipped", "delivered"], default: "pending" },
+    paymentMethod: { type: String, enum: ["razorpay", "cod"], default: "razorpay" },
     paymentId: { type: String },
     razorpayOrderId: { type: String }, // Store Razorpay order ID for tracking
-    createdAt: { type: Date, default: Date.now }
+    trackingNumber: { type: String }, // Shipping tracking number
+    shippingAddress: {
+        fullName: { type: String },
+        address: { type: String },
+        city: { type: String },
+        state: { type: String },
+        pincode: { type: String },
+        phone: { type: String }
+    },
+    createdAt: { type: Date, default: Date.now },
+    shippedAt: { type: Date },
+    deliveredAt: { type: Date }
 });
 const Order = mongoose.model('order', orderSchema);
 module.exports = Order;
